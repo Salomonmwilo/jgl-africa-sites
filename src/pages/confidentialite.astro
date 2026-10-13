@@ -1,0 +1,147 @@
+---
+/**
+ * Politique de confidentialité — MODÈLE À VALIDER par JGL Africa et par un juriste
+ * connaissant le droit congolais de la protection des données avant la mise en ligne.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import NoteEditoriale from '../components/NoteEditoriale.astro';
+import { siteConfig, estRenseigne } from '../data/site-config';
+
+const { juridique, coordonnees, donneesPersonnelles, hebergeur } = siteConfig;
+const majIso = donneesPersonnelles.derniereMiseAJour;
+const maj = estRenseigne(majIso)
+  ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(majIso))
+  : null;
+---
+
+<BaseLayout
+  titre="Politique de confidentialité"
+  description="Comment Justicia Great Lakes Africa traite les données personnelles transmises par le formulaire de contact de son site, et quels sont vos droits."
+>
+  <PageHero
+    titre="Politique de confidentialité"
+    chapeau="Cette page explique quelles données personnelles nous recueillons sur ce site, pourquoi, et comment exercer vos droits."
+  />
+
+  <section class="section">
+    <div class="conteneur texte-courant">
+      <NoteEditoriale
+        elements={[
+          'Ce texte est un modèle : il doit être relu et validé par JGL Africa et par un juriste avant publication.',
+          'Vérifier la conformité au droit congolais applicable (notamment le Code du numérique de 2023 et la désignation éventuelle d’un délégué à la protection des données) et la question du stockage des données hors de la RDC.',
+          'Compléter dans site-config.ts : forme juridique, siège, contact protection des données, durée de conservation, date de mise à jour.',
+        ]}
+      />
+
+      <h2>Qui est responsable du traitement ?</h2>
+      <p>
+        Le responsable du traitement des données collectées sur ce site est {siteConfig.nom}
+        {estRenseigne(juridique.formeJuridique) && <>, {juridique.formeJuridique}</>}
+        {estRenseigne(juridique.siegeSocial) && <>, dont le siège est situé {juridique.siegeSocial}</>}.
+      </p>
+      {
+        estRenseigne(donneesPersonnelles.contactProtectionDonnees) ? (
+          <p>
+            Pour toute question relative à vos données personnelles, vous pouvez contacter :{' '}
+            {donneesPersonnelles.contactProtectionDonnees}.
+          </p>
+        ) : (
+          <p>
+            Pour toute question relative à vos données personnelles, écrivez-nous au moyen du{' '}
+            <a href="/contact/">formulaire de contact</a>.
+          </p>
+        )
+      }
+
+      <h2>Quelles données sont collectées ?</h2>
+      <p>Lorsque vous utilisez le formulaire de contact, nous recueillons :</p>
+      <ul>
+        <li>votre nom et votre adresse e-mail (obligatoires) ;</li>
+        <li>le nom de votre organisation (facultatif) ;</li>
+        <li>l'objet et le contenu de votre message.</li>
+      </ul>
+      <p>
+        Nous ne vous demandons aucune donnée sensible. Merci de ne pas transmettre par ce formulaire d'informations
+        relatives à votre santé, à vos opinions politiques ou religieuses, à votre origine, à une procédure
+        judiciaire, à la situation d'une victime ou à un enfant.
+      </p>
+      <p>
+        Comme pour tout site internet, l'hébergeur enregistre des données techniques de connexion (adresse IP,
+        date et heure, pages consultées) nécessaires au fonctionnement et à la sécurité du site.
+      </p>
+
+      <h2>Pourquoi ces données sont-elles utilisées ?</h2>
+      <p>
+        Les données transmises par le formulaire servent uniquement à répondre à votre message et à assurer le
+        suivi de votre demande. Elles ne sont ni vendues, ni louées, ni utilisées pour vous adresser des messages
+        promotionnels.
+      </p>
+      <p>
+        Ce traitement repose sur votre consentement, que vous exprimez en cochant la case prévue à cet effet avant
+        l'envoi. Vous pouvez retirer ce consentement à tout moment.
+      </p>
+
+      <h2>Qui a accès à vos données ?</h2>
+      <p>
+        Vos messages sont accessibles aux seules personnes chargées d'y répondre au sein de {siteConfig.nom}.
+      </p>
+      <p>
+        Le site et les messages envoyés par le formulaire sont hébergés par {hebergeur.nom}
+        ({hebergeur.pays}), qui agit comme prestataire technique. Vos données sont donc stockées en dehors de la
+        République démocratique du Congo.
+      </p>
+
+      <h2>Combien de temps sont-elles conservées ?</h2>
+      {
+        estRenseigne(donneesPersonnelles.dureeConservation) ? (
+          <p>
+            Les messages sont conservés pendant {donneesPersonnelles.dureeConservation} après le dernier échange,
+            puis supprimés.
+          </p>
+        ) : (
+          <p>
+            Les messages sont conservés pendant la durée nécessaire au traitement de votre demande, puis supprimés.
+          </p>
+        )
+      }
+
+      <h2>Quels sont vos droits ?</h2>
+      <p>Vous pouvez à tout moment demander :</p>
+      <ul>
+        <li>à accéder aux données vous concernant ;</li>
+        <li>à les faire rectifier si elles sont inexactes ;</li>
+        <li>à les faire supprimer ;</li>
+        <li>à retirer votre consentement.</li>
+      </ul>
+      <p>
+        Pour exercer ces droits, contactez-nous au moyen du <a href="/contact/">formulaire de contact</a>
+        {estRenseigne(coordonnees.email) && <> ou par e-mail à <a href={`mailto:${coordonnees.email}`}>{coordonnees.email}</a></>}.
+        Vous pouvez également adresser une réclamation à l'autorité compétente en matière de protection des
+        données personnelles.
+      </p>
+
+      <h2>Cookies et mesure d'audience</h2>
+      <p>
+        Ce site n'utilise ni cookie publicitaire, ni outil de mesure d'audience, ni contenu provenant de réseaux
+        sociaux. Il ne dépose aucun cookie sur votre appareil.
+      </p>
+
+      <h2>Sécurité</h2>
+      <p>
+        Le site est servi exclusivement en connexion chiffrée (HTTPS). Aucune transmission sur internet n'étant
+        totalement sûre, nous vous demandons de ne jamais envoyer d'informations sensibles par le formulaire.
+      </p>
+
+      {maj && <p class="mise-a-jour">Dernière mise à jour : {maj}.</p>}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .mise-a-jour {
+    margin-top: var(--e-5);
+    color: var(--encre-douce);
+    font-size: var(--t-petit);
+  }
+</style>

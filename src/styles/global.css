@@ -1,0 +1,393 @@
+/* ==========================================================================
+   Styles globaux — Justicia Great Lakes Africa
+   --------------------------------------------------------------------------
+   PALETTE : l'or (--mais) et le bleu (--nuit-700) sont relevés sur le logo
+   « Justicia Great Lakes » visible sur les photos de l'organisation. Ce n'est
+   pas une charte graphique officielle : à remplacer si JGL Africa en fournit une. Pour changer les couleurs, modifiez
+   uniquement les variables de la section « Jetons de conception » ci-dessous.
+   Après modification, vérifiez les contrastes : npm run verifier:contrastes
+   ========================================================================== */
+
+/* ---------- Jetons de conception ---------- */
+:root {
+  /* Couleurs */
+  --nuit: #0e2a47;        /* Bleu profond : confiance, sérieux institutionnel */
+  --nuit-700: #1d5577;    /* Bleu du logo (« GREAT LAKES ») : liens, accents */
+  --lac: #1b6f69;         /* Vert-turquoise du lac Kivu : paix, engagement */
+  --lac-clair: #dcedea;   /* Fond doux associé au vert-turquoise */
+  --brume: #eef3f2;       /* Fond clair des sections alternées */
+  --mais: #e4a63c;        /* Or du logo (« JUSTICIA ») : appels à l'action */
+  --mais-fonce: #cc8c22;  /* Survol de l'accent */
+  --blanc: #ffffff;
+  --encre: #17202b;       /* Texte principal */
+  --encre-douce: #4a5563; /* Texte secondaire */
+  --trait: #cfdad8;       /* Bordures et séparateurs */
+  --alerte: #a3261b;      /* Messages d'erreur */
+  --succes: #1b6f69;
+
+  /* Rôles */
+  --fond: var(--blanc);
+  --texte: var(--encre);
+  --lien: var(--nuit-700);
+  --focus: var(--nuit);
+
+  /* Typographie : polices système, aucune requête externe */
+  --police-titres: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, 'Noto Serif', 'DejaVu Serif', Georgia, serif;
+  --police-texte: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Échelle typographique (rapport ~1,25, fluide entre mobile et bureau) */
+  --t-petit: 0.875rem;
+  --t-base: 1.0625rem;
+  --t-moyen: 1.25rem;
+  --t-h3: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  --t-h2: clamp(1.625rem, 1.3rem + 1.3vw, 2.25rem);
+  --t-h1: clamp(2.125rem, 1.5rem + 2.6vw, 3.5rem);
+
+  /* Espacements */
+  --e-1: 0.25rem;
+  --e-2: 0.5rem;
+  --e-3: 1rem;
+  --e-4: 1.5rem;
+  --e-5: 2.5rem;
+  --e-6: 4rem;
+  --e-7: 6rem;
+
+  /* Mise en page */
+  --largeur: 72rem;
+  --largeur-texte: 42rem;
+  --gouttiere: clamp(1rem, 4vw, 2rem);
+  --hauteur-entete: 4.5rem;
+  --rayon: 6px;
+  --rayon-grand: 14px;
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* WCAG 2.4.11 : l'élément focalisé ne doit pas être masqué par l'en-tête fixe */
+  scroll-padding-top: calc(var(--hauteur-entete) + 1rem);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police-texte);
+  font-size: var(--t-base);
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--police-titres);
+  color: var(--nuit);
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0 0 var(--e-3);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--t-h1);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: var(--t-h2);
+}
+h3 {
+  font-size: var(--t-h3);
+}
+h4 {
+  font-size: var(--t-moyen);
+}
+
+p,
+ul,
+ol {
+  margin: 0 0 var(--e-3);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--lien);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--nuit);
+  text-decoration-thickness: 0.14em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+strong {
+  font-weight: 650;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--trait);
+  margin: var(--e-5) 0;
+}
+
+/* ---------- Utilitaires ---------- */
+.visuellement-masque {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.conteneur {
+  width: 100%;
+  max-width: var(--largeur);
+  margin-inline: auto;
+  padding-inline: var(--gouttiere);
+}
+
+.texte-courant {
+  max-width: var(--largeur-texte);
+}
+
+/* Colonne de texte alignée à gauche dans le conteneur (pas centrée) */
+.conteneur.texte-courant {
+  max-width: var(--largeur);
+}
+
+.conteneur.texte-courant > * {
+  max-width: var(--largeur-texte);
+}
+
+.texte-courant > * + h2 {
+  margin-top: var(--e-5);
+}
+
+.texte-courant > * + h3 {
+  margin-top: var(--e-4);
+}
+
+.texte-courant li + li {
+  margin-top: var(--e-2);
+}
+
+.chapeau {
+  font-size: var(--t-moyen);
+  line-height: 1.55;
+  color: var(--encre-douce);
+  max-width: var(--largeur-texte);
+}
+
+/* Sections */
+.section {
+  padding-block: var(--e-6);
+}
+
+.section--brume {
+  background: var(--brume);
+}
+
+.section--nuit {
+  background: var(--nuit);
+  color: #e8eef4;
+  --focus: var(--mais);
+  --lien: #ffffff;
+}
+
+.section--nuit h2,
+.section--nuit h3 {
+  color: var(--blanc);
+}
+
+.entete-section {
+  max-width: var(--largeur-texte);
+  margin-bottom: var(--e-5);
+}
+
+.entete-section p {
+  color: var(--encre-douce);
+}
+
+.section--nuit .entete-section p {
+  color: #c9d5e1;
+}
+
+/* ---------- Boutons ---------- */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-2);
+  min-height: 2.875rem; /* zone cible confortable (WCAG 2.5.8) */
+  padding: 0.6rem 1.25rem;
+  border: 2px solid transparent;
+  border-radius: var(--rayon);
+  font: 600 1rem/1.2 var(--police-texte);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.bouton--principal {
+  background: var(--mais);
+  color: var(--nuit);
+}
+
+.bouton--principal:hover {
+  background: var(--mais-fonce);
+  color: var(--nuit);
+}
+
+.bouton--secondaire {
+  background: transparent;
+  color: var(--nuit);
+  border-color: var(--nuit);
+}
+
+.bouton--secondaire:hover {
+  background: var(--nuit);
+  color: var(--blanc);
+}
+
+.section--nuit .bouton--secondaire,
+.sur-fond-sombre .bouton--secondaire {
+  color: var(--blanc);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.section--nuit .bouton--secondaire:hover,
+.sur-fond-sombre .bouton--secondaire:hover {
+  background: var(--blanc);
+  color: var(--nuit);
+}
+
+.groupe-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}
+
+/* Lien d'action discret (« En savoir plus ») */
+.lien-action {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+}
+
+/* ---------- Grilles ---------- */
+.grille {
+  display: grid;
+  gap: var(--e-5) var(--e-4);
+}
+
+@media (min-width: 40em) {
+  .grille--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grille--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
+  .grille--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Encadrés ---------- */
+.encadre {
+  border-left: 4px solid var(--lac);
+  background: var(--lac-clair);
+  padding: var(--e-4);
+  border-radius: 0 var(--rayon) var(--rayon) 0;
+  max-width: var(--largeur-texte);
+}
+
+.encadre > :last-child {
+  margin-bottom: 0;
+}
+
+.encadre--avertissement {
+  border-left-color: var(--mais-fonce);
+  background: #fbf3df;
+}
+
+.encadre h2,
+.encadre h3 {
+  font-size: var(--t-moyen);
+  margin-bottom: var(--e-2);
+}
+
+/* Motif de courbes de niveau (signature visuelle du site) */
+.motif-courbes {
+  background-image: url('/images/illustrations/courbes-niveau-sombre.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+/* ---------- Réduction des animations ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Impression ---------- */
+@media print {
+  .entete-site,
+  .pied-site,
+  .lien-evitement,
+  .groupe-boutons {
+    display: none !important;
+  }
+  body {
+    font-size: 11pt;
+  }
+  a::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+  }
+}

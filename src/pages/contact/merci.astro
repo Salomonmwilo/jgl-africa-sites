@@ -1,0 +1,20 @@
+---
+/**
+ * Page de confirmation affichée après un envoi du formulaire sans JavaScript.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+---
+
+<BaseLayout titre="Message envoyé" description="Confirmation de l'envoi de votre message à Justicia Great Lakes Africa." noindex>
+  <PageHero
+    titre="Merci pour votre message"
+    chapeau="Votre message a bien été transmis. Nous vous répondrons dans les meilleurs délais."
+    ariane={[{ libelle: 'Contact', href: '/contact/' }]}
+  >
+    <div class="groupe-boutons">
+      <a class="bouton bouton--principal" href="/">Retour à l'accueil</a>
+      <a class="bouton bouton--secondaire" href="/programmes/">Découvrir nos programmes</a>
+    </div>
+  </PageHero>
+</BaseLayout>

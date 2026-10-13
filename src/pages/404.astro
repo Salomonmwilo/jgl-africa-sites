@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { navigationPrincipale } from '../data/navigation';
+---
+
+<BaseLayout titre="Page introuvable" description="La page demandée n'existe pas ou a été déplacée." noindex>
+  <section class="section page-404">
+    <div class="conteneur page-404__grille">
+      <div>
+        <p class="page-404__code">Erreur 404</p>
+        <h1>Cette page est introuvable</h1>
+        <p class="chapeau">
+          L'adresse saisie est peut-être incorrecte, ou la page a été déplacée. Vérifiez l'adresse, ou poursuivez
+          votre visite à partir de l'une des pages ci-dessous.
+        </p>
+        <div class="groupe-boutons">
+          <a class="bouton bouton--principal" href="/">Retour à l'accueil</a>
+          <a class="bouton bouton--secondaire" href="/contact/">Nous signaler un lien cassé</a>
+        </div>
+        <h2>Pages principales</h2>
+        <ul>
+          {navigationPrincipale.map((l) => <li><a href={l.href}>{l.libelle}</a></li>)}
+        </ul>
+      </div>
+      <img src="/images/illustrations/observatoire-jeunesse-paix.svg" alt="" width="640" height="480" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-404__grille {
+    display: grid;
+    gap: var(--e-5);
+    align-items: center;
+  }
+
+  @media (min-width: 52em) {
+    .page-404__grille {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+  }
+
+  .page-404__code {
+    font-weight: 700;
+    color: var(--lac);
+    margin-bottom: var(--e-2);
+  }
+
+  .page-404 h2 {
+    font-size: var(--t-h3);
+    margin-top: var(--e-5);
+  }
+
+  .page-404 img {
+    border-radius: var(--rayon-grand);
+  }
+
+  .page-404 li + li {
+    margin-top: var(--e-2);
+  }
+</style>

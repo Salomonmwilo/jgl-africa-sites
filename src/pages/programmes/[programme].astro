@@ -1,0 +1,312 @@
+---
+/**
+ * Page détaillée d'un programme, générée à partir de src/content/programmes/<nom>.md
+ */
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import EtatVide from '../../components/EtatVide.astro';
+import NoteEditoriale from '../../components/NoteEditoriale.astro';
+import GaleriePhotos from '../../components/GaleriePhotos.astro';
+import { programmesTries, articlesDuProgramme, type Programme } from '../../lib/contenus';
+import { siteConfig } from '../../data/site-config';
+
+export async function getStaticPaths() {
+  const programmes = await programmesTries();
+  return programmes.map((programme) => ({
+    params: { programme: programme.id },
+    props: { programme, autres: programmes.filter((p) => p.id !== programme.id) },
+  }));
+}
+
+interface Props {
+  programme: Programme;
+  autres: Programme[];
+}
+
+const { programme, autres } = Astro.props;
+const d = programme.data;
+const { Content } = await render(programme);
+const articles = await articlesDuProgramme(programme.id);
+const estEnfance = programme.id === 'children-in-need';
+---
+
+<BaseLayout titre={d.titre} description={d.description}>
+  <PageHero
+    titre={d.titre}
+    chapeau={d.resume}
+    ariane={[{ libelle: 'Nos programmes', href: '/programmes/' }]}
+    photo={d.photo}
+    illustration={d.illustration}
+    illustrationAlt={d.illustrationAlt}
+    teinte={d.teinte}
+  >
+    {d.rubrique && <p class="mention-rubrique">Une rubrique de {siteConfig.nom}</p>}
+  </PageHero>
+
+  {
+    d.avertissement && (
+      <div class="conteneur avertissement-haut">
+        <div class="encadre encadre--avertissement" role="note" aria-labelledby="avertissement-titre">
+          <h2 id="avertissement-titre">Avertissement</h2>
+          <p>{d.avertissement}</p>
+        </div>
+      </div>
+    )
+  }
+
+  <section class="section" aria-labelledby="presentation-titre">
+    <div class="conteneur texte-courant">
+      <h2 id="presentation-titre">Présentation</h2>
+      <Content />
+    </div>
+  </section>
+
+  {
+    estEnfance && (
+      <section class="section section--brume" aria-labelledby="protection-titre">
+        <div class="conteneur texte-courant">
+          <h2 id="protection-titre">Notre engagement pour la protection des enfants</h2>
+          <p>
+            Par respect pour leur dignité et leur sécurité, nous ne publions ni le nom, ni la photographie, ni
+            l'histoire personnelle d'un enfant sans une autorisation explicite et appropriée, et jamais lorsque
+            cette publication pourrait l'exposer à un risque.
+          </p>
+          <p>
+            Les visuels de cette page sont des illustrations : aucun enfant n'y est représenté.
+          </p>
+          <NoteEditoriale>
+            <p>
+              Si JGL Africa dispose d'une politique de protection de l'enfance adoptée, ajouter ici un lien vers
+              cette politique et le contact du référent (site-config.ts → protectionEnfance). Ne pas mentionner de
+              politique qui n'existe pas.
+            </p>
+          </NoteEditoriale>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.objectifs.length > 0 && (
+      <section class:list={['section', { 'section--brume': !estEnfance }]} aria-labelledby="objectifs-titre">
+        <div class="conteneur">
+          <h2 id="objectifs-titre">Objectifs</h2>
+          <ul class="objectifs" role="list">
+            {d.objectifs.map((o) => (
+              <li>{o}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.axes.length > 0 && (
+      <section class="section" aria-labelledby="axes-titre">
+        <div class="conteneur">
+          <div class="entete-section">
+            <h2 id="axes-titre">Axes de travail</h2>
+          </div>
+          <ul class="grille grille--3 axes" role="list">
+            {d.axes.map((a) => (
+              <li>
+                <h3>{a.titre}</h3>
+                <p>{a.description}</p>
+              </li>
+            ))}
+          </ul>
+          <NoteEditoriale elements={d.aCompleter} />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.galerie.length > 0 && (
+      <section class="section section--brume" aria-labelledby="galerie-titre">
+        <div class="conteneur">
+          <div class="entete-section">
+            <h2 id="galerie-titre">En images</h2>
+          </div>
+          <GaleriePhotos photos={d.galerie} />
+        </div>
+      </section>
+    )
+  }
+
+  <section class:list={['section', { 'section--brume': d.galerie.length === 0 }]} aria-labelledby="actus-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="actus-titre">Actualités du programme</h2>
+      </div>
+      {
+        articles.length > 0 ? (
+          <div class="grille grille--3">
+            {articles.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        ) : (
+          <EtatVide
+            niveauTitre={3}
+            titre="Aucune actualité publiée pour le moment"
+            texte={`Les activités et publications liées à ce programme seront présentées ici.`}
+            lien={{ libelle: 'Voir toutes les actualités', href: '/actualites/' }}
+          />
+        )
+      }
+    </div>
+  </section>
+
+  {
+    d.engagement && (
+      <section class="section" aria-labelledby="engagement-titre">
+        <div class="conteneur">
+          <div class="engagement">
+            <div>
+              <h2 id="engagement-titre">{d.engagement.titre}</h2>
+              <p>{d.engagement.texte}</p>
+            </div>
+            <a class="bouton bouton--principal" href={d.engagement.lienHref}>
+              {d.engagement.lienLibelle}
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <nav class="section section--brume autres" aria-labelledby="autres-titre">
+    <div class="conteneur">
+      <h2 id="autres-titre">Nos autres programmes</h2>
+      <ul class="autres__liste" role="list">
+        {
+          autres.map((p) => (
+            <li>
+              <a href={`/programmes/${p.id}/`}>{p.data.titre}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+</BaseLayout>
+
+<style>
+  .mention-rubrique {
+    font-weight: 600;
+    color: var(--lac);
+    margin: 0;
+  }
+
+  .avertissement-haut {
+    margin-top: calc(-1 * var(--e-5));
+    position: relative;
+  }
+
+  .avertissement-haut .encadre {
+    background: #fbf3df;
+    box-shadow: 0 1px 0 var(--trait);
+  }
+
+  .objectifs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--e-3);
+    max-width: 52rem;
+  }
+
+  .objectifs li {
+    position: relative;
+    padding-left: 2rem;
+    font-size: var(--t-moyen);
+    line-height: 1.5;
+  }
+
+  .objectifs li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    border: 3px solid var(--lac);
+  }
+
+  .axes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .axes li {
+    border-top: 4px solid var(--nuit);
+    padding-top: var(--e-3);
+  }
+
+  .axes h3 {
+    margin-bottom: var(--e-2);
+  }
+
+  .axes p {
+    color: var(--encre-douce);
+    margin: 0;
+  }
+
+  .engagement {
+    display: grid;
+    gap: var(--e-4);
+    align-items: center;
+    padding: var(--e-5);
+    border: 2px solid var(--nuit);
+    border-radius: var(--rayon-grand);
+  }
+
+  @media (min-width: 52em) {
+    .engagement {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--e-6);
+    }
+  }
+
+  .engagement p {
+    margin: 0;
+    max-width: var(--largeur-texte);
+  }
+
+  .autres h2 {
+    font-size: var(--t-h3);
+  }
+
+  .autres__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+  }
+
+  .autres__liste a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--trait);
+    border-radius: 999px;
+    background: var(--blanc);
+    color: var(--nuit);
+    text-decoration: none;
+    font-weight: 550;
+  }
+
+  .autres__liste a:hover {
+    border-color: var(--nuit);
+  }
+</style>

@@ -1,0 +1,183 @@
+---
+/**
+ * Pied de page institutionnel.
+ * Les coordonnées et réseaux sociaux n'apparaissent que s'ils sont renseignés
+ * dans src/data/site-config.ts.
+ */
+import { siteConfig, estRenseigne, reseauxActifs } from '../data/site-config';
+import { navigationLegale } from '../data/navigation';
+import { programmesTries } from '../lib/contenus';
+
+const programmes = await programmesTries();
+const { coordonnees } = siteConfig;
+const aDesCoordonnees = [coordonnees.adresse, coordonnees.telephone, coordonnees.email].some(estRenseigne);
+const annee = new Date().getFullYear();
+---
+
+<footer class="pied-site">
+  <div class="conteneur pied-site__grille">
+    <div class="pied-site__identite">
+      <p class="pied-site__nom">{siteConfig.nom}</p>
+      <p>
+        Droits humains, justice, paix, bonne gouvernance et engagement des jeunes dans la région des
+        Grands Lacs africains.
+      </p>
+    </div>
+
+    <nav class="pied-site__colonne" aria-labelledby="pied-organisation">
+      <h2 id="pied-organisation" class="pied-site__titre">L'organisation</h2>
+      <ul>
+        <li><a href="/a-propos/">À propos</a></li>
+        <li><a href="/programmes/">Nos programmes</a></li>
+        <li><a href="/actualites/">Actualités et publications</a></li>
+        <li><a href="/en-images/">En images</a></li>
+        <li><a href="/soutenir/">Soutenir nos actions</a></li>
+      </ul>
+    </nav>
+
+    <nav class="pied-site__colonne" aria-labelledby="pied-programmes">
+      <h2 id="pied-programmes" class="pied-site__titre">Programmes</h2>
+      <ul>
+        {programmes.map((p) => <li><a href={`/programmes/${p.id}/`}>{p.data.titre}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="pied-site__colonne">
+      <h2 class="pied-site__titre">Nous contacter</h2>
+      {
+        aDesCoordonnees ? (
+          <address>
+            {estRenseigne(coordonnees.adresse) && <p>{coordonnees.adresse}</p>}
+            {estRenseigne(coordonnees.telephone) && (
+              <p>
+                <a href={`tel:${coordonnees.telephone.replace(/\s+/g, '')}`}>{coordonnees.telephone}</a>
+              </p>
+            )}
+            {estRenseigne(coordonnees.email) && (
+              <p>
+                <a href={`mailto:${coordonnees.email}`}>{coordonnees.email}</a>
+              </p>
+            )}
+          </address>
+        ) : (
+          <p>Pour toute question ou proposition de collaboration, écrivez-nous.</p>
+        )
+      }
+      <p><a class="lien-action" href="/contact/">Accéder au formulaire de contact</a></p>
+      {
+        reseauxActifs.length > 0 && (
+          <ul class="pied-site__reseaux" aria-label="Réseaux sociaux">
+            {reseauxActifs.map((r) => (
+              <li>
+                <a href={r.url!} rel="noopener noreferrer">{r.nom}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="conteneur pied-site__bas">
+    <p>© {annee} {siteConfig.nom}</p>
+    <nav aria-label="Informations légales">
+      <ul>
+        {navigationLegale.map((l) => <li><a href={l.href}>{l.libelle}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .pied-site {
+    background: var(--nuit);
+    color: #d5dfe9;
+    --focus: var(--mais);
+    padding-top: var(--e-6);
+    font-size: 0.975rem;
+  }
+
+  .pied-site a {
+    color: #ffffff;
+    text-decoration-color: rgba(255, 255, 255, 0.45);
+  }
+
+  .pied-site a:hover {
+    text-decoration-color: var(--mais);
+  }
+
+  .pied-site__grille {
+    display: grid;
+    gap: var(--e-5);
+  }
+
+  @media (min-width: 40em) {
+    .pied-site__grille {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64em) {
+    .pied-site__grille {
+      grid-template-columns: 1.4fr 1fr 1.2fr 1.2fr;
+    }
+  }
+
+  .pied-site__nom {
+    font-family: var(--police-titres);
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: var(--e-2);
+  }
+
+  .pied-site__titre {
+    font-family: var(--police-texte);
+    font-size: 1rem;
+    color: var(--mais);
+    margin-bottom: var(--e-3);
+  }
+
+  .pied-site ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .pied-site__colonne li a {
+    display: inline-block;
+    padding-block: 0.3rem;
+  }
+
+  .pied-site address {
+    font-style: normal;
+  }
+
+  .pied-site__reseaux {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+    margin-top: var(--e-3) !important;
+  }
+
+  .pied-site__bas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--e-3);
+    margin-top: var(--e-6);
+    padding-block: var(--e-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: var(--t-petit);
+  }
+
+  .pied-site__bas p {
+    margin: 0;
+  }
+
+  .pied-site__bas ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2) var(--e-4);
+  }
+</style>

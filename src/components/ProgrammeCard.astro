@@ -1,0 +1,140 @@
+---
+/**
+ * Présentation d'un programme dans une liste.
+ * Variante « ligne » : visuel à gauche, texte à droite (page Nos programmes).
+ * Variante « carte » : visuel au-dessus (page d'accueil).
+ * Le visuel est la photo du programme si elle existe, sinon son illustration.
+ */
+import Photo from './Photo.astro';
+import type { Programme } from '../lib/contenus';
+
+interface Props {
+  programme: Programme;
+  variante?: 'carte' | 'ligne';
+  niveauTitre?: 2 | 3;
+}
+
+const { programme, variante = 'carte', niveauTitre = 3 } = Astro.props;
+const { titre, resume, illustration, photo, rubrique } = programme.data;
+const href = `/programmes/${programme.id}/`;
+const Titre = niveauTitre === 2 ? 'h2' : 'h3';
+---
+
+<article class:list={['programme', `programme--${variante}`]}>
+  <div class="programme__visuel">
+    {/* Visuel décoratif : le titre suffit à identifier le programme. */}
+    {
+      photo ? (
+        <Photo
+          id={photo}
+          ratio="4 / 3"
+          decorative
+          sizes={variante === 'ligne' ? '(min-width: 44em) 18rem, 100vw' : '(min-width: 64em) 17rem, (min-width: 40em) 45vw, 100vw'}
+        />
+      ) : (
+        <img src={illustration} alt="" width="640" height="480" loading="lazy" decoding="async" />
+      )
+    }
+  </div>
+  <div class="programme__texte">
+    {rubrique && <p class="programme__type">Rubrique transversale</p>}
+    <Titre class="programme__titre">
+      <a href={href}>{titre}</a>
+    </Titre>
+    <p>{resume}</p>
+    <p class="programme__lien" aria-hidden="true">Découvrir le programme</p>
+  </div>
+</article>
+
+<style>
+  .programme {
+    position: relative;
+    display: grid;
+    gap: var(--e-3);
+    align-content: start;
+  }
+
+  .programme__visuel {
+    overflow: hidden;
+    border-radius: var(--rayon-grand);
+  }
+
+  .programme__visuel img,
+  .programme__visuel :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--rayon-grand);
+    background: var(--brume);
+    transition: transform 0.4s ease;
+  }
+
+  .programme:hover .programme__visuel img,
+  .programme:hover .programme__visuel :global(img) {
+    transform: scale(1.03);
+  }
+
+  .programme--ligne {
+    padding-block: var(--e-5);
+    border-top: 1px solid var(--trait);
+  }
+
+  @media (min-width: 44em) {
+    .programme--ligne {
+      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+      gap: var(--e-5);
+      align-items: center;
+    }
+  }
+
+  .programme__titre {
+    margin-bottom: var(--e-2);
+  }
+
+  .programme__titre a {
+    color: var(--nuit);
+    text-decoration: none;
+  }
+
+  /* Toute la carte est cliquable, mais un seul lien est annoncé. */
+  .programme__titre a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--rayon-grand);
+  }
+
+  .programme__titre a:focus-visible {
+    outline: none;
+  }
+
+  .programme__titre a:focus-visible::after {
+    outline: 3px solid var(--focus);
+    outline-offset: 4px;
+  }
+
+  .programme:hover .programme__titre a {
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+  }
+
+  .programme__type {
+    margin-bottom: var(--e-1);
+    font-size: var(--t-petit);
+    font-weight: 600;
+    color: var(--lac);
+  }
+
+  .programme__texte > p:not(.programme__type) {
+    color: var(--encre-douce);
+  }
+
+  .programme__lien {
+    color: var(--lien);
+    font-weight: 600;
+    margin: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+</style>

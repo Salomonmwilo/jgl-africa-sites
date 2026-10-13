@@ -1,0 +1,114 @@
+---
+/**
+ * Mise en page commune à toutes les pages : métadonnées, en-tête, contenu, pied de page.
+ */
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { siteConfig } from '../data/site-config';
+import { t } from '../i18n/fr';
+
+interface Props {
+  /** Titre de la page (sans le nom du site). Laisser vide pour la page d'accueil. */
+  titre?: string;
+  /** Description unique de la page (150 à 160 caractères environ). */
+  description: string;
+  /** Image de partage (chemin dans public/). */
+  imagePartage?: string;
+  /** Empêche l'indexation (pages de démonstration, page 404, remerciement…). */
+  noindex?: boolean;
+  /** Type Open Graph. */
+  typeOg?: 'website' | 'article';
+  /** En-tête bleu nuit (page d'accueil). */
+  enteteSombre?: boolean;
+}
+
+const {
+  titre,
+  description,
+  imagePartage = '/images/partage-jgl-africa.jpg',
+  noindex = false,
+  typeOg = 'website',
+  enteteSombre = false,
+} = Astro.props;
+
+const titreComplet = titre
+  ? `${titre} | ${siteConfig.nom}`
+  : `${siteConfig.nom} | Droits humains, justice, paix et jeunesse`;
+
+// URL canonique : uniquement si le domaine officiel est confirmé.
+const urlCanonique = siteConfig.urlOfficielle
+  ? new URL(Astro.url.pathname, siteConfig.urlOfficielle).href
+  : null;
+
+// Base des adresses absolues (domaine officiel, sinon adresse Netlify fournie au build).
+const baseAbsolue = siteConfig.urlOfficielle ?? Astro.site?.href ?? null;
+const urlPage = baseAbsolue ? new URL(Astro.url.pathname, baseAbsolue).href : null;
+const urlImage = baseAbsolue ? new URL(imagePartage, baseAbsolue).href : null;
+---
+
+<!doctype html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titreComplet}</title>
+    <!-- Signale que JavaScript est actif (menu mobile repliable) avant l'affichage -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {urlCanonique && <link rel="canonical" href={urlCanonique} />}
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0e2a47" />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <!-- Partage sur les réseaux sociaux (Open Graph) -->
+    <meta property="og:type" content={typeOg} />
+    <meta property="og:site_name" content={siteConfig.nom} />
+    <meta property="og:locale" content={siteConfig.locale} />
+    <meta property="og:title" content={titre ?? siteConfig.nom} />
+    <meta property="og:description" content={description} />
+    {urlPage && <meta property="og:url" content={urlPage} />}
+    {urlImage && <meta property="og:image" content={urlImage} />}
+    {urlImage && <meta property="og:image:width" content="1200" />}
+    {urlImage && <meta property="og:image:height" content="630" />}
+    {urlImage && <meta property="og:image:alt" content="Formation organisée par Justicia Great Lakes Africa au CLAC de Bukavu" />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="lien-evitement" href="#contenu">{t.lienEvitement}</a>
+    <SiteHeader sombre={enteteSombre} />
+    <main id="contenu" tabindex="-1">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
+
+<style>
+  .lien-evitement {
+    position: absolute;
+    left: var(--e-3);
+    top: -100px;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    background: var(--mais);
+    color: var(--nuit);
+    font-weight: 700;
+    border-radius: var(--rayon);
+    text-decoration: none;
+  }
+
+  .lien-evitement:focus {
+    top: var(--e-3);
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

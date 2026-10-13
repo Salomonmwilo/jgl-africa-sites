@@ -1,0 +1,133 @@
+---
+/**
+ * Page individuelle d'un article, générée à partir de src/content/actualites/<nom>.md
+ */
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { articlesPublies, programmesTries, dateFr, dateIso, type Article } from '../../lib/contenus';
+import { categories } from '../../data/categories';
+import { t } from '../../i18n/fr';
+
+export async function getStaticPaths() {
+  const articles = await articlesPublies();
+  return articles.map((article) => ({
+    params: { article: article.id },
+    props: {
+      article,
+      autres: articles.filter((a) => a.id !== article.id).slice(0, 3),
+    },
+  }));
+}
+
+interface Props {
+  article: Article;
+  autres: Article[];
+}
+
+const { article, autres } = Astro.props;
+const d = article.data;
+const { Content } = await render(article);
+const programmesLies = (await programmesTries()).filter((p) => d.programmes.some((r) => r.id === p.id));
+---
+
+<BaseLayout
+  titre={d.titre}
+  description={d.description}
+  typeOg="article"
+  imagePartage={d.couverture?.src}
+  noindex={d.demo}
+>
+  <PageHero
+    titre={d.titre}
+    chapeau={d.description}
+    ariane={[{ libelle: 'Actualités et publications', href: '/actualites/' }]}
+  >
+    <p class="meta-article">
+      <a href={`/actualites/categorie/${d.categorie}/`}>{categories[d.categorie]}</a>
+      {d.date && <time datetime={dateIso(d.date)}>Publié le {dateFr(d.date)}</time>}
+    </p>
+  </PageHero>
+
+  <article class="section">
+    <div class="conteneur texte-courant">
+      {
+        d.demo && (
+          <p class="encadre encadre--avertissement">
+            <strong>{t.exempleDemo}.</strong> Ce contenu sert uniquement à illustrer la mise en page.
+          </p>
+        )
+      }
+      {
+        d.couverture && (
+          <figure class="couverture">
+            <img src={d.couverture.src} alt={d.couverture.alt} width="1200" height="675" />
+            {d.couverture.credit && <figcaption>{d.couverture.credit}</figcaption>}
+          </figure>
+        )
+      }
+      <Content />
+      {
+        programmesLies.length > 0 && (
+          <p class="programmes-lies">
+            Programmes liés :{' '}
+            {programmesLies.map((p, i) => (
+              <>
+                {i > 0 && ', '}
+                <a href={`/programmes/${p.id}/`}>{p.data.titre}</a>
+              </>
+            ))}
+          </p>
+        )
+      }
+    </div>
+  </article>
+
+  {
+    autres.length > 0 && (
+      <section class="section section--brume" aria-labelledby="autres-titre">
+        <div class="conteneur">
+          <h2 id="autres-titre">À lire aussi</h2>
+          <div class="grille grille--3">
+            {autres.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .meta-article {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2) var(--e-4);
+    margin: 0;
+    font-weight: 600;
+    color: var(--encre-douce);
+  }
+
+  .couverture {
+    margin: 0 0 var(--e-5);
+  }
+
+  .couverture img {
+    width: 100%;
+    border-radius: var(--rayon-grand);
+  }
+
+  .couverture figcaption {
+    font-size: var(--t-petit);
+    color: var(--encre-douce);
+    margin-top: var(--e-2);
+  }
+
+  .programmes-lies {
+    margin-top: var(--e-5);
+    padding-top: var(--e-4);
+    border-top: 1px solid var(--trait);
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+/**
+ * Carte éditoriale d'une actualité ou publication.
+ * La date n'est affichée que si elle est renseignée dans l'article.
+ */
+import type { Article } from '../lib/contenus';
+import { dateFr, dateIso } from '../lib/contenus';
+import { categories } from '../data/categories';
+import { t } from '../i18n/fr';
+
+interface Props {
+  article: Article;
+  niveauTitre?: 2 | 3;
+}
+
+const { article, niveauTitre = 3 } = Astro.props;
+const { titre, description, date, categorie, couverture, demo } = article.data;
+const Titre = niveauTitre === 2 ? 'h2' : 'h3';
+---
+
+<article class="article-carte">
+  <div class="article-carte__visuel">
+    <img
+      src={couverture?.src ?? '/images/illustrations/courbes-niveau.svg'}
+      alt=""
+      width="640"
+      height="360"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <div class="article-carte__texte">
+    {demo && <p class="article-carte__demo">{t.exempleDemo}</p>}
+    <p class="article-carte__meta">
+      <span>{categories[categorie]}</span>
+      {date && <time datetime={dateIso(date)}>{dateFr(date)}</time>}
+    </p>
+    <Titre class="article-carte__titre">
+      <a href={`/actualites/${article.id}/`}>{titre}</a>
+    </Titre>
+    <p>{description}</p>
+  </div>
+</article>
+
+<style>
+  .article-carte {
+    position: relative;
+    display: grid;
+    gap: var(--e-3);
+    align-content: start;
+    background: var(--blanc);
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon-grand);
+    overflow: hidden;
+  }
+
+  .article-carte__visuel img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--brume);
+  }
+
+  .article-carte__texte {
+    padding: 0 var(--e-4) var(--e-4);
+  }
+
+  .article-carte__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-1) var(--e-3);
+    font-size: var(--t-petit);
+    color: var(--lac);
+    font-weight: 600;
+    margin-bottom: var(--e-2);
+  }
+
+  .article-carte__meta time {
+    color: var(--encre-douce);
+    font-weight: 400;
+  }
+
+  .article-carte__demo {
+    display: inline-block;
+    font-size: var(--t-petit);
+    font-weight: 700;
+    background: #fbf3df;
+    color: #6b4a06;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--rayon);
+  }
+
+  .article-carte__titre {
+    font-size: var(--t-moyen);
+  }
+
+  .article-carte__titre a {
+    color: var(--nuit);
+    text-decoration: none;
+  }
+
+  .article-carte__titre a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .article-carte__titre a:focus-visible {
+    outline: none;
+  }
+
+  .article-carte:focus-within {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .article-carte:hover .article-carte__titre a {
+    text-decoration: underline;
+  }
+
+  .article-carte__texte > p:last-child {
+    color: var(--encre-douce);
+    margin: 0;
+  }
+</style>

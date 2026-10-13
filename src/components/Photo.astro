@@ -1,0 +1,108 @@
+---
+/**
+ * Photographie responsive (WebP en trois largeurs) issue du registre src/data/photos.ts.
+ *
+ * Exemple : <Photo id="salle-de-formation" sizes="(min-width: 64em) 50vw, 100vw" legende />
+ */
+import { photos, largeursPhotos, type IdPhoto } from '../data/photos';
+
+interface Props {
+  id: IdPhoto;
+  /** Largeur d'affichage, pour que le navigateur choisisse la bonne taille. */
+  sizes?: string;
+  /** Afficher la légende sous la photo. */
+  legende?: boolean;
+  /** Photo principale de la page : chargée en priorité, sans chargement différé. */
+  priorite?: boolean;
+  /** Recadrage : rapport largeur / hauteur, par exemple « 4 / 3 ». Vide = proportions d'origine. */
+  ratio?: string;
+  /** Texte alternatif vide si la photo est purement décorative (le contexte la décrit déjà). */
+  decorative?: boolean;
+  /** La photo remplit son conteneur (fond de section) : position absolue, sans arrondi. */
+  remplir?: boolean;
+  /**
+   * Agrandit légèrement la photo pour écarter le filigrane situé dans un coin.
+   * À réserver aux usages décoratifs (fonds, tuiles) : les photos légendées restent entières.
+   */
+  rogner?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  sizes = '100vw',
+  legende = false,
+  priorite = false,
+  ratio,
+  decorative = false,
+  remplir = false,
+  rogner = false,
+  class: classe,
+} = Astro.props;
+
+const p = photos[id];
+const srcset = largeursPhotos.map((l) => `/images/photos/${id}-${l}.webp ${l}w`).join(', ');
+const hauteur = Math.round((1600 * p.hauteur) / p.largeur);
+const styleImage = [
+  ratio ? `aspect-ratio: ${ratio}` : '',
+  p.position ? `object-position: ${p.position}` : '',
+]
+  .filter(Boolean)
+  .join('; ');
+---
+
+<figure class:list={['photo', { 'photo--remplir': remplir, 'photo--rogner': rogner }, classe]}>
+  <img
+    src={`/images/photos/${id}-960.webp`}
+    srcset={srcset}
+    sizes={sizes}
+    width="1600"
+    height={hauteur}
+    alt={decorative ? '' : p.alt}
+    loading={priorite ? 'eager' : 'lazy'}
+    fetchpriority={priorite ? 'high' : undefined}
+    decoding="async"
+    style={styleImage || undefined}
+  />
+  {legende && <figcaption>{p.legende}</figcaption>}
+</figure>
+
+<style>
+  .photo {
+    margin: 0;
+  }
+
+  .photo img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    background: var(--brume);
+    border-radius: var(--rayon-grand);
+  }
+
+  .photo--remplir {
+    position: absolute;
+    inset: 0;
+  }
+
+  .photo--remplir img {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .photo--rogner {
+    overflow: hidden;
+  }
+
+  .photo--rogner img {
+    scale: 1.14;
+    transform-origin: 50% 25%;
+  }
+
+  figcaption {
+    margin-top: var(--e-2);
+    font-size: var(--t-petit);
+    line-height: 1.45;
+    color: var(--encre-douce);
+  }
+</style>

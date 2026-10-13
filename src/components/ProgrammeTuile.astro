@@ -1,0 +1,129 @@
+---
+/**
+ * Tuile de programme (page d'accueil) : photo en haut, bloc de couleur avec le titre et le résumé.
+ * Toute la tuile est cliquable ; un seul lien est annoncé (le titre).
+ */
+import Photo from './Photo.astro';
+import type { Programme } from '../lib/contenus';
+
+interface Props {
+  programme: Programme;
+  couleur?: 'nuit' | 'lac';
+}
+
+const { programme, couleur = 'nuit' } = Astro.props;
+const { titre, resume, photo, illustration } = programme.data;
+---
+
+<article class:list={['tuile', `tuile--${couleur}`]}>
+  <div class="tuile__visuel">
+    {
+      photo ? (
+        <Photo id={photo} remplir rogner decorative sizes="(min-width: 64em) 18rem, (min-width: 40em) 45vw, 100vw" />
+      ) : (
+        <img class="tuile__illustration" src={illustration} alt="" width="640" height="480" loading="lazy" decoding="async" />
+      )
+    }
+  </div>
+  <div class="tuile__corps">
+    <h3 class="tuile__titre">
+      <a href={`/programmes/${programme.id}/`}>{titre}</a>
+    </h3>
+    <p>{resume}</p>
+    <p class="tuile__lien" aria-hidden="true">Découvrir le programme</p>
+  </div>
+</article>
+
+<style>
+  .tuile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--rayon-grand);
+    overflow: hidden;
+    color: #ffffff;
+    --focus: var(--mais);
+  }
+
+  .tuile--nuit {
+    background: var(--nuit);
+  }
+
+  .tuile--lac {
+    background: var(--lac);
+  }
+
+  .tuile__visuel {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--brume);
+  }
+
+  .tuile__visuel :global(img),
+  .tuile__illustration {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .tuile:hover .tuile__visuel :global(img),
+  .tuile:hover .tuile__illustration {
+    transform: scale(1.04);
+  }
+
+  .tuile__corps {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--e-4);
+    border-top: 4px solid var(--mais);
+  }
+
+  .tuile__titre {
+    font-size: var(--t-moyen);
+    color: #ffffff;
+    margin-bottom: var(--e-2);
+  }
+
+  .tuile__titre a {
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .tuile__titre a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .tuile__titre a:focus-visible {
+    outline: none;
+  }
+
+  .tuile:focus-within {
+    outline: 3px solid var(--nuit);
+    outline-offset: 3px;
+  }
+
+  .tuile p {
+    color: #e3ebf2;
+    font-size: 0.975rem;
+  }
+
+  .tuile__lien {
+    margin: auto 0 0;
+    padding-top: var(--e-2);
+    font-weight: 600;
+    color: #ffffff !important;
+    text-decoration: underline;
+    text-decoration-color: var(--mais);
+    text-underline-offset: 0.2em;
+  }
+
+  .tuile:hover .tuile__titre a {
+    text-decoration: underline;
+    text-decoration-color: var(--mais);
+  }
+</style>

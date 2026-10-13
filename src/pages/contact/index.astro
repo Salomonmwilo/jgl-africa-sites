@@ -1,0 +1,509 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import NoteEditoriale from '../../components/NoteEditoriale.astro';
+import Photo from '../../components/Photo.astro';
+import { siteConfig, estRenseigne, reseauxActifs } from '../../data/site-config';
+import { t } from '../../i18n/fr';
+
+const { coordonnees } = siteConfig;
+const nomFormulaire = siteConfig.formulaireContact.nomFormulaire;
+const aDesCoordonnees = [coordonnees.adresse, coordonnees.telephone, coordonnees.email, coordonnees.horaires].some(estRenseigne);
+---
+
+<BaseLayout
+  titre="Contact"
+  description="Contactez Justicia Great Lakes Africa pour une question, une proposition de partenariat, une collaboration ou une demande d'information."
+>
+  <PageHero
+    titre="Nous contacter"
+    chapeau="Une question, une proposition de collaboration ou de partenariat ? Écrivez-nous au moyen du formulaire ci-dessous."
+  />
+
+  <section class="section">
+    <div class="conteneur contact">
+      <div class="contact__formulaire">
+        <h2>Formulaire de contact</h2>
+
+        <div class="encadre encadre--avertissement avant-envoi" role="note" aria-labelledby="avant-envoi-titre">
+          <h3 id="avant-envoi-titre">Avant d'écrire</h3>
+          <p>
+            Ce formulaire est destiné aux demandes générales. <strong>N'y transmettez pas d'informations sensibles</strong>&nbsp;:
+            détails d'une affaire en cours, situation personnelle d'une victime, données de santé, informations
+            concernant un enfant, opinions politiques ou documents confidentiels.
+          </p>
+          <p>
+            Si vous êtes en danger immédiat, contactez les services d'urgence ou les autorités compétentes&nbsp;: ce
+            formulaire n'est pas un service d'urgence.
+          </p>
+        </div>
+
+        <!--
+          Formulaire géré par Netlify Forms (détecté au déploiement grâce à data-netlify).
+          Il ne fonctionne qu'une fois le site publié sur Netlify ET la détection des
+          formulaires activée dans le tableau de bord (voir README, section Formulaire).
+        -->
+        <form
+          id="formulaire-contact"
+          class="formulaire"
+          name={nomFormulaire}
+          method="POST"
+          action="/contact/merci/"
+          data-netlify="true"
+          netlify-honeypot="champ-robot"
+          novalidate
+        >
+          <input type="hidden" name="form-name" value={nomFormulaire} />
+
+          <!-- Champ piège anti-spam : invisible pour les visiteurs, à laisser vide -->
+          <p class="visuellement-masque" aria-hidden="true">
+            <label>Ne pas remplir ce champ <input name="champ-robot" tabindex="-1" autocomplete="off" /></label>
+          </p>
+
+          <div id="resume-erreurs" class="resume-erreurs" role="alert" aria-labelledby="resume-erreurs-titre" tabindex="-1" hidden>
+            <h3 id="resume-erreurs-titre"></h3>
+            <ul></ul>
+          </div>
+
+          <p class="legende-obligatoire">{t.formulaire.legendeObligatoire}</p>
+
+          <div class="champ">
+            <label for="nom">Nom et prénom <span class="obligatoire" aria-hidden="true">*</span><span class="visuellement-masque"> ({t.formulaire.champObligatoire})</span></label>
+            <input id="nom" name="nom" type="text" autocomplete="name" required maxlength="120" aria-describedby="nom-erreur" />
+            <p id="nom-erreur" class="champ__erreur" hidden></p>
+          </div>
+
+          <div class="champ">
+            <label for="email">Adresse e-mail <span class="obligatoire" aria-hidden="true">*</span><span class="visuellement-masque"> ({t.formulaire.champObligatoire})</span></label>
+            <p id="email-aide" class="champ__aide">Nous l'utiliserons uniquement pour vous répondre.</p>
+            <input id="email" name="email" type="email" autocomplete="email" required maxlength="160" aria-describedby="email-aide email-erreur" />
+            <p id="email-erreur" class="champ__erreur" hidden></p>
+          </div>
+
+          <div class="champ">
+            <label for="organisation">Organisation <span class="facultatif">(facultatif)</span></label>
+            <input id="organisation" name="organisation" type="text" autocomplete="organization" maxlength="160" />
+          </div>
+
+          <div class="champ">
+            <label for="objet">Objet du message <span class="obligatoire" aria-hidden="true">*</span><span class="visuellement-masque"> ({t.formulaire.champObligatoire})</span></label>
+            <input id="objet" name="objet" type="text" required maxlength="160" aria-describedby="objet-erreur" />
+            <p id="objet-erreur" class="champ__erreur" hidden></p>
+          </div>
+
+          <div class="champ">
+            <label for="message">Message <span class="obligatoire" aria-hidden="true">*</span><span class="visuellement-masque"> ({t.formulaire.champObligatoire})</span></label>
+            <p id="message-aide" class="champ__aide">Merci de ne pas inclure d'informations sensibles (voir l'encadré ci-dessus).</p>
+            <textarea id="message" name="message" rows="7" required minlength="10" maxlength="5000" aria-describedby="message-aide message-erreur"></textarea>
+            <p id="message-erreur" class="champ__erreur" hidden></p>
+          </div>
+
+          <div class="champ champ--case">
+            <input id="consentement" name="consentement" type="checkbox" value="oui" required aria-describedby="consentement-erreur" />
+            <label for="consentement">
+              J'accepte que les informations saisies soient utilisées pour répondre à ma demande, conformément à la{' '}
+              <a href="/confidentialite/">politique de confidentialité</a>. <span class="obligatoire" aria-hidden="true">*</span><span class="visuellement-masque"> ({t.formulaire.champObligatoire})</span>
+            </label>
+            <p id="consentement-erreur" class="champ__erreur" hidden></p>
+          </div>
+
+          <button class="bouton bouton--principal" type="submit">{t.formulaire.envoyer}</button>
+          <p id="statut-envoi" class="statut-envoi" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <aside class="contact__infos" aria-labelledby="coordonnees-titre">
+        <h2 id="coordonnees-titre">Coordonnées</h2>
+        {
+          aDesCoordonnees ? (
+            <address>
+              {estRenseigne(coordonnees.adresse) && (
+                <p>
+                  <strong>Adresse</strong>
+                  <br />
+                  {coordonnees.adresse}
+                  {estRenseigne(coordonnees.ville) && <><br />{coordonnees.ville}</>}
+                  <br />
+                  {coordonnees.pays}
+                </p>
+              )}
+              {estRenseigne(coordonnees.telephone) && (
+                <p>
+                  <strong>Téléphone</strong>
+                  <br />
+                  <a href={`tel:${coordonnees.telephone.replace(/\s+/g, '')}`}>{coordonnees.telephone}</a>
+                </p>
+              )}
+              {estRenseigne(coordonnees.email) && (
+                <p>
+                  <strong>E-mail</strong>
+                  <br />
+                  <a href={`mailto:${coordonnees.email}`}>{coordonnees.email}</a>
+                </p>
+              )}
+              {estRenseigne(coordonnees.horaires) && (
+                <p>
+                  <strong>Horaires</strong>
+                  <br />
+                  {coordonnees.horaires}
+                </p>
+              )}
+            </address>
+          ) : (
+            <p>
+              Le formulaire de contact est actuellement le moyen privilégié pour nous écrire. Nos autres
+              coordonnées seront publiées prochainement.
+            </p>
+          )
+        }
+
+        {
+          reseauxActifs.length > 0 && (
+            <>
+              <h3>Réseaux sociaux</h3>
+              <ul class="reseaux" role="list">
+                {reseauxActifs.map((r) => (
+                  <li>
+                    <a href={r.url!} rel="noopener noreferrer">
+                      {r.nom}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+
+        <NoteEditoriale
+          elements={[
+            'Adresse physique, téléphone, e-mail institutionnel et horaires (src/data/site-config.ts → coordonnees).',
+            'Réseaux sociaux : Facebook renseigné ; compléter les autres comptes officiels s’ils existent (pas les comptes personnels).',
+            'Formulaire : tester un envoi réel après déploiement et configurer les notifications e-mail dans Netlify.',
+          ]}
+        />
+
+        <Photo id="equipe-accueil" class="contact__photo" ratio="3 / 2" sizes="(min-width: 60em) 24rem, 100vw" legende />
+
+        <h3>Vous souhaitez…</h3>
+        <ul class="raccourcis" role="list">
+          <li><a href="/soutenir/">Soutenir nos actions</a></li>
+          <li><a href="/programmes/">Participer à un programme</a></li>
+          <li><a href="/programmes/clinique-juridique/">Découvrir la Clinique juridique</a></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact {
+    display: grid;
+    gap: var(--e-6);
+  }
+
+  @media (min-width: 60em) {
+    .contact {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    }
+  }
+
+  .avant-envoi {
+    margin-bottom: var(--e-5);
+  }
+
+  .formulaire {
+    max-width: 40rem;
+  }
+
+  .legende-obligatoire {
+    color: var(--encre-douce);
+    font-size: var(--t-petit);
+  }
+
+  .champ {
+    margin-bottom: var(--e-4);
+  }
+
+  .champ label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--e-1);
+  }
+
+  .champ__aide {
+    margin: 0 0 var(--e-2);
+    font-size: var(--t-petit);
+    color: var(--encre-douce);
+  }
+
+  .obligatoire {
+    color: var(--alerte);
+  }
+
+  .facultatif {
+    font-weight: 400;
+    color: var(--encre-douce);
+  }
+
+  .champ input[type='text'],
+  .champ input[type='email'],
+  .champ textarea {
+    width: 100%;
+    min-height: 2.875rem;
+    padding: 0.6rem 0.75rem;
+    font: inherit;
+    color: var(--encre);
+    background: var(--blanc);
+    border: 2px solid #6b7684;
+    border-radius: var(--rayon);
+  }
+
+  .champ textarea {
+    resize: vertical;
+  }
+
+  .champ input:focus-visible,
+  .champ textarea:focus-visible {
+    border-color: var(--nuit);
+  }
+
+  .champ [aria-invalid='true'] {
+    border-color: var(--alerte) !important;
+    background: #fff7f6;
+  }
+
+  .champ__erreur {
+    margin: var(--e-1) 0 0;
+    color: var(--alerte);
+    font-weight: 600;
+    font-size: var(--t-petit);
+  }
+
+  .champ--case {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--e-1) var(--e-3);
+    align-items: start;
+  }
+
+  .champ--case input {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0.15rem 0 0;
+    accent-color: var(--nuit);
+  }
+
+  .champ--case label {
+    font-weight: 400;
+  }
+
+  .champ--case .champ__erreur {
+    grid-column: 1 / -1;
+  }
+
+  .resume-erreurs {
+    border: 2px solid var(--alerte);
+    border-radius: var(--rayon);
+    padding: var(--e-3) var(--e-4);
+    margin-bottom: var(--e-4);
+    background: #fff7f6;
+  }
+
+  .resume-erreurs h3 {
+    font-family: var(--police-texte);
+    font-size: 1rem;
+    color: var(--alerte);
+    margin-bottom: var(--e-2);
+  }
+
+  .resume-erreurs ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .resume-erreurs a {
+    color: var(--alerte);
+  }
+
+  .statut-envoi {
+    margin-top: var(--e-3);
+    font-weight: 600;
+  }
+
+  .statut-envoi[data-etat='succes'] {
+    color: var(--succes);
+  }
+
+  .statut-envoi[data-etat='erreur'] {
+    color: var(--alerte);
+  }
+
+  .contact__infos :global(.contact__photo) {
+    margin-top: var(--e-5);
+  }
+
+  .contact__infos address {
+    font-style: normal;
+  }
+
+  .contact__infos h3 {
+    font-size: var(--t-moyen);
+    margin-top: var(--e-5);
+  }
+
+  .reseaux,
+  .raccourcis {
+    padding-left: 1.2rem;
+  }
+
+  .raccourcis li + li {
+    margin-top: var(--e-2);
+  }
+</style>
+
+<script>
+  import { t } from '../../i18n/fr';
+
+  const formulaire = document.getElementById('formulaire-contact') as HTMLFormElement | null;
+  const resume = document.getElementById('resume-erreurs') as HTMLDivElement | null;
+  const statut = document.getElementById('statut-envoi') as HTMLParagraphElement | null;
+
+  type Regle = { id: string; verifier: (champ: HTMLInputElement | HTMLTextAreaElement) => string | null };
+
+  const motifEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  const regles: Regle[] = [
+    { id: 'nom', verifier: (c) => (c.value.trim() ? null : t.formulaire.erreurs.nom) },
+    {
+      id: 'email',
+      verifier: (c) => {
+        const v = c.value.trim();
+        if (!v) return t.formulaire.erreurs.emailVide;
+        return motifEmail.test(v) ? null : t.formulaire.erreurs.emailInvalide;
+      },
+    },
+    { id: 'objet', verifier: (c) => (c.value.trim() ? null : t.formulaire.erreurs.objet) },
+    {
+      id: 'message',
+      verifier: (c) => {
+        const v = c.value.trim();
+        if (!v) return t.formulaire.erreurs.message;
+        return v.length >= 10 ? null : t.formulaire.erreurs.messageCourt;
+      },
+    },
+    {
+      id: 'consentement',
+      verifier: (c) => ((c as HTMLInputElement).checked ? null : t.formulaire.erreurs.consentement),
+    },
+  ];
+
+  function afficherErreur(id: string, message: string | null) {
+    const champ = document.getElementById(id);
+    const zone = document.getElementById(`${id}-erreur`);
+    if (!champ || !zone) return;
+    if (message) {
+      champ.setAttribute('aria-invalid', 'true');
+      zone.textContent = message;
+      zone.hidden = false;
+    } else {
+      champ.removeAttribute('aria-invalid');
+      zone.textContent = '';
+      zone.hidden = true;
+    }
+  }
+
+  function valider(): { id: string; message: string }[] {
+    const erreurs: { id: string; message: string }[] = [];
+    for (const regle of regles) {
+      const champ = document.getElementById(regle.id) as HTMLInputElement | HTMLTextAreaElement | null;
+      if (!champ) continue;
+      const message = regle.verifier(champ);
+      afficherErreur(regle.id, message);
+      if (message) erreurs.push({ id: regle.id, message });
+    }
+    return erreurs;
+  }
+
+  function afficherResume(erreurs: { id: string; message: string }[]) {
+    if (!resume) return;
+    const titre = resume.querySelector('h3');
+    const liste = resume.querySelector('ul');
+    if (!titre || !liste) return;
+    if (erreurs.length === 0) {
+      resume.hidden = true;
+      return;
+    }
+    titre.textContent = t.formulaire.resumeErreurs(erreurs.length);
+    liste.replaceChildren(
+      ...erreurs.map((e) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${e.id}`;
+        a.textContent = e.message;
+        a.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          document.getElementById(e.id)?.focus();
+        });
+        li.append(a);
+        return li;
+      }),
+    );
+    resume.hidden = false;
+    resume.focus();
+  }
+
+  if (formulaire) {
+    // Revalide un champ déjà signalé pendant la saisie (et non à la perte du focus :
+    // cela évite un décalage de mise en page au moment où l'on clique sur « Envoyer »).
+    for (const regle of regles) {
+      const champ = document.getElementById(regle.id) as HTMLInputElement | HTMLTextAreaElement | null;
+      champ?.addEventListener(champ.type === 'checkbox' ? 'change' : 'input', () => {
+        if (champ.getAttribute('aria-invalid') === 'true') afficherErreur(regle.id, regle.verifier(champ));
+      });
+    }
+
+    formulaire.addEventListener('submit', async (evenement) => {
+      evenement.preventDefault();
+      if (statut) {
+        statut.textContent = '';
+        delete statut.dataset.etat;
+      }
+
+      const erreurs = valider();
+      afficherResume(erreurs);
+      if (erreurs.length > 0) return;
+
+      const bouton = formulaire.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (bouton) {
+        bouton.disabled = true;
+        bouton.textContent = t.formulaire.envoiEnCours;
+      }
+
+      try {
+        // Netlify Forms exige un corps encodé en URL (pas de JSON).
+        const corps = new URLSearchParams(new FormData(formulaire) as unknown as Record<string, string>).toString();
+        const reponse = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: corps,
+        });
+        if (!reponse.ok) throw new Error(`HTTP ${reponse.status}`);
+        formulaire.reset();
+        if (statut) {
+          statut.dataset.etat = 'succes';
+          statut.textContent = t.formulaire.succes;
+        }
+      } catch {
+        if (statut) {
+          statut.dataset.etat = 'erreur';
+          statut.textContent = t.formulaire.echec;
+        }
+      } finally {
+        if (bouton) {
+          bouton.disabled = false;
+          bouton.textContent = t.formulaire.envoyer;
+        }
+      }
+    });
+  }
+</script>

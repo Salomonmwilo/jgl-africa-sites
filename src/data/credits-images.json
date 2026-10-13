@@ -1,0 +1,121 @@
+{
+  "_lisezmoi": "Registre des images du site. Toute image ajoutée doit être inscrite ici AVANT sa publication, avec sa source, son auteur et sa licence. Si les droits d'une image ne peuvent pas être confirmés, elle ne doit pas être publiée. Les photographies d'activités sont décrites dans src/data/photos.ts (textes alternatifs et légendes). La section 'candidates' liste des images repérées mais NON intégrées.",
+  "utilisees": [
+    {
+      "fichier": "public/images/illustrations/paysage-kivu.svg",
+      "titre": "Collines en terrasses, lac et volcan",
+      "auteur": "Illustration originale créée pour le site (scripts/generer-illustrations.py)",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "Page d'accueil, image de partage"
+    },
+    {
+      "fichier": "public/images/illustrations/paysage-lac.svg",
+      "titre": "Lac et collines en terrasses",
+      "auteur": "Illustration originale créée pour le site",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "Pages intérieures"
+    },
+    {
+      "fichier": "public/images/illustrations/academie-droits-humains.svg",
+      "titre": "Livre ouvert devant les collines",
+      "auteur": "Illustration originale créée pour le site",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "Académie des droits humains"
+    },
+    {
+      "fichier": "public/images/illustrations/ecole-leader-gouvernance.svg",
+      "titre": "Chemin vers un édifice à colonnes",
+      "auteur": "Illustration originale créée pour le site",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "École du Leader et de la Bonne Gouvernance"
+    },
+    {
+      "fichier": "public/images/illustrations/children-in-need.svg",
+      "titre": "Jeune arbre abrité",
+      "auteur": "Illustration originale créée pour le site",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune (aucun enfant représenté, conformément aux règles de protection)",
+      "usage": "Children in Need"
+    },
+    {
+      "fichier": "public/images/illustrations/clinique-juridique.svg",
+      "titre": "Balance de la justice",
+      "auteur": "Illustration originale créée pour le site",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "Clinique juridique"
+    },
+    {
+      "fichier": "public/images/illustrations/observatoire-jeunesse-paix.svg",
+      "titre": "Longue-vue et colombe",
+      "auteur": "Illustration originale créée pour le site",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "Observatoire Jeunesse pour la Paix"
+    },
+    {
+      "fichier": "public/images/illustrations/courbes-niveau.svg et courbes-niveau-sombre.svg",
+      "titre": "Motif de courbes de niveau",
+      "auteur": "Motif original créé pour le site",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "Fonds décoratifs"
+    },
+    {
+      "fichier": "public/images/partage-jgl-africa.jpg, public/favicon.svg, public/favicon-32.png, public/apple-touch-icon.png",
+      "titre": "Image de partage et icônes du site",
+      "auteur": "Créations originales pour le site (ce ne sont pas le logo officiel de JGL Africa)",
+      "licence": "Propriété du projet — à céder à JGL Africa",
+      "source": "Création originale",
+      "personnes": "Aucune",
+      "usage": "Réseaux sociaux, onglet du navigateur"
+    }
+  ],
+  "candidates": [
+    {
+      "titre": "Lake Kivu (MONUSCO, photo Abel Kavanagh, 2015)",
+      "source": "https://commons.wikimedia.org/wiki/File:Lake_Kivu_(20875703429).jpg",
+      "licence": "CC BY-SA 2.0 (selon la recherche, à revérifier sur la page du fichier)",
+      "statut": "Non intégrée : téléchargement et vérification de la licence impossibles depuis l'environnement de développement. Photo de la mission de l'ONU : la légende ne doit suggérer aucun lien entre l'ONU et JGL Africa."
+    },
+    {
+      "titre": "Goma et le volcan Nyiragongo (MONUSCO, 2015)",
+      "source": "https://commons.wikimedia.org/wiki/File:2015_Goma_%26_volcano_Nyiragongo_in_background_-_North_Kivu_(20875766889).jpg",
+      "licence": "CC BY-SA 2.0 (à revérifier)",
+      "statut": "Non intégrée — mêmes réserves."
+    },
+    {
+      "titre": "Le lac Kivu et la ville de Bukavu (Mukengere karume, 2024)",
+      "source": "https://commons.wikimedia.org/wiki/File:Le_lac_Kivu_et_la_ville_de_Bukavu.jpg",
+      "licence": "CC0 (à revérifier)",
+      "statut": "Non intégrée — candidate prioritaire pour illustrer Bukavu."
+    },
+    {
+      "titre": "Nyiragongo volcano (Nina R, 2016)",
+      "source": "https://commons.wikimedia.org/wiki/File:Nyiragongo_volcano_(31437452912).jpg",
+      "licence": "CC BY 2.0 (à revérifier)",
+      "statut": "Non intégrée."
+    }
+  ],
+  "photographies": {
+    "source": "Photos fournies par l'équipe du projet le 13 octobre 2026, portant le filigrane « Justicia Great Lakes – Human rights and peace ».",
+    "fichiers": "public/images/photos/*.webp (15 photos × 3 largeurs), optimisées par scripts/optimiser-photos.py",
+    "credit": "Photos : JGL Africa",
+    "auteur": "À confirmer : 8 originaux portent dans leurs métadonnées le nom d'auteur « JUrlin4 ». Si l'organisation souhaite créditer le photographe, modifier creditPhotos dans src/data/photos.ts.",
+    "personnes": "Personnes identifiables (adultes, jeunes participants). Aucune photo d'enfant.",
+    "consentement": "À confirmer par l'organisation avant la mise en ligne publique.",
+    "metadonnees": "Supprimées (GPS, appareil, auteur, dates)."
+  }
+}

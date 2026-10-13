@@ -1,0 +1,56 @@
+---
+/**
+ * Message affiché lorsqu'une liste (actualités, publications…) est encore vide.
+ */
+interface Props {
+  titre: string;
+  texte: string;
+  lien?: { libelle: string; href: string };
+  niveauTitre?: 2 | 3;
+}
+
+const { titre, texte, lien, niveauTitre = 2 } = Astro.props;
+const Titre = niveauTitre === 2 ? 'h2' : 'h3';
+---
+
+<div class="etat-vide">
+  <img src="/images/illustrations/paysage-lac.svg" alt="" width="160" height="120" loading="lazy" />
+  <div>
+    <Titre class="etat-vide__titre">{titre}</Titre>
+    <p>{texte}</p>
+    {lien && <a class="bouton bouton--secondaire" href={lien.href}>{lien.libelle}</a>}
+  </div>
+</div>
+
+<style>
+  .etat-vide {
+    display: grid;
+    gap: var(--e-4);
+    align-items: center;
+    padding: var(--e-5) var(--e-4);
+    border: 1px dashed var(--trait);
+    border-radius: var(--rayon-grand);
+    background: var(--blanc);
+    max-width: 48rem;
+  }
+
+  @media (min-width: 40em) {
+    .etat-vide {
+      grid-template-columns: 10rem minmax(0, 1fr);
+    }
+  }
+
+  .etat-vide img {
+    width: 10rem;
+    border-radius: var(--rayon);
+    opacity: 0.85;
+  }
+
+  .etat-vide__titre {
+    font-size: var(--t-h3);
+  }
+
+  .etat-vide p {
+    color: var(--encre-douce);
+  }
+</style>

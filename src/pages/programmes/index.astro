@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ProgrammeCard from '../../components/ProgrammeCard.astro';
+import AppelAction from '../../components/AppelAction.astro';
+import { programmesTries } from '../../lib/contenus';
+
+const programmes = await programmesTries();
+---
+
+<BaseLayout
+  titre="Nos programmes"
+  description="Académie des droits humains, École du Leader et de la Bonne Gouvernance, Children in Need, Clinique juridique et Observatoire Jeunesse pour la Paix : les programmes de JGL Africa."
+>
+  <PageHero
+    titre="Nos programmes"
+    chapeau="Cinq programmes et initiatives pour promouvoir les droits humains, l'accès à la justice, la bonne gouvernance et l'engagement des jeunes pour la paix."
+  />
+
+  <section class="section" aria-label="Liste des programmes">
+    <div class="conteneur">
+      <div class="liste-programmes">
+        {programmes.map((p) => <ProgrammeCard programme={p} variante="ligne" niveauTitre={2} />)}
+      </div>
+      <p class="precision">
+        Ces programmes et initiatives sont portés par Justicia Great Lakes Africa ; ils ne constituent pas des
+        entités juridiques distinctes.
+      </p>
+    </div>
+  </section>
+
+  <AppelAction
+    titre="Participer ou collaborer"
+    texte="Jeunes, établissements, organisations de la société civile ou partenaires : contactez-nous pour en savoir plus sur nos programmes."
+    principal={{ libelle: 'Nous contacter', href: '/contact/' }}
+  />
+</BaseLayout>
+
+<style>
+  .liste-programmes {
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .precision {
+    margin-top: var(--e-4);
+    color: var(--encre-douce);
+    font-size: var(--t-petit);
+  }
+</style>

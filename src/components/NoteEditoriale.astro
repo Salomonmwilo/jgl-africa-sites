@@ -1,0 +1,57 @@
+---
+/**
+ * Note éditoriale interne : signale une information à fournir ou à valider.
+ * Visible uniquement en développement (npm run dev) ou si PUBLIC_NOTES_EDITORIALES=true.
+ * Elle n'apparaît JAMAIS sur le site public par défaut.
+ */
+import { afficherNotesEditoriales } from '../data/site-config';
+
+interface Props {
+  elements?: string[];
+}
+
+const { elements = [] } = Astro.props;
+---
+
+{
+  afficherNotesEditoriales && (
+    <aside class="note-editoriale" aria-label="Note éditoriale interne">
+      <p class="note-editoriale__titre">Note interne — à compléter avant publication</p>
+      <slot />
+      {elements.length > 0 && (
+        <ul>
+          {elements.map((e) => (
+            <li>{e}</li>
+          ))}
+        </ul>
+      )}
+    </aside>
+  )
+}
+
+<style>
+  .note-editoriale {
+    margin-block: var(--e-4);
+    padding: var(--e-3) var(--e-4);
+    border: 2px dashed #b3261e;
+    border-radius: var(--rayon);
+    background: #fff4f2;
+    color: #5c1410;
+    font-size: var(--t-petit);
+    max-width: var(--largeur-texte);
+  }
+
+  .note-editoriale__titre {
+    font-weight: 700;
+    margin-bottom: var(--e-2);
+  }
+
+  .note-editoriale ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .note-editoriale :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

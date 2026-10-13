@@ -1,0 +1,129 @@
+---
+/**
+ * Mentions légales — MODÈLE À VALIDER. Les champs non renseignés dans
+ * src/data/site-config.ts ne sont pas affichés.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import NoteEditoriale from '../components/NoteEditoriale.astro';
+import { siteConfig, estRenseigne } from '../data/site-config';
+import credits from '../data/credits-images.json';
+import { creditPhotos } from '../data/photos';
+
+const { juridique, coordonnees, hebergeur } = siteConfig;
+
+const lignesEditeur = [
+  ['Forme juridique', juridique.formeJuridique],
+  ["Numéro d'enregistrement", juridique.numeroEnregistrement],
+  ['Siège', juridique.siegeSocial],
+  ['Représentant légal', juridique.representantLegal],
+  ['Directeur ou directrice de la publication', juridique.directeurPublication],
+  ['Téléphone', coordonnees.telephone],
+  ['E-mail', coordonnees.email],
+].filter((l): l is [string, string] => estRenseigne(l[1]));
+---
+
+<BaseLayout
+  titre="Mentions légales"
+  description="Mentions légales du site de Justicia Great Lakes Africa : éditeur, hébergement, propriété intellectuelle et crédits des illustrations."
+>
+  <PageHero titre="Mentions légales" />
+
+  <section class="section">
+    <div class="conteneur texte-courant">
+      <NoteEditoriale
+        elements={[
+          'Compléter dans site-config.ts : forme juridique, numéro d’enregistrement, siège, représentant légal, directeur de la publication.',
+          'Recopier l’adresse postale officielle de l’hébergeur (site-config.ts → hebergeur.adresse).',
+          'Faire valider ce modèle par un juriste avant publication.',
+        ]}
+      />
+
+      <h2>Éditeur du site</h2>
+      <p>Le présent site est édité par {siteConfig.nom} ({siteConfig.nomCourt}).</p>
+      {
+        lignesEditeur.length > 0 && (
+          <dl class="infos">
+            {lignesEditeur.map(([terme, valeur]) => (
+              <>
+                <dt>{terme}</dt>
+                <dd>{valeur}</dd>
+              </>
+            ))}
+          </dl>
+        )
+      }
+      <p>Pour toute question : <a href="/contact/">formulaire de contact</a>.</p>
+
+      <h2>Hébergement</h2>
+      <p>
+        Le site est hébergé par {hebergeur.nom}
+        {estRenseigne(hebergeur.adresse) ? <>, {hebergeur.adresse}</> : <> ({hebergeur.pays})</>} —{' '}
+        <a href={hebergeur.site} rel="noopener noreferrer">{hebergeur.site.replace('https://', '')}</a>.
+      </p>
+
+      <h2>Propriété intellectuelle</h2>
+      <p>
+        Les textes, illustrations et éléments graphiques de ce site sont protégés. Toute reproduction, en tout ou
+        partie, nécessite l'autorisation préalable de {siteConfig.nom}, sauf mention contraire.
+      </p>
+      <p>
+        L'identité visuelle actuelle du site (couleurs, typographie, illustrations) est une proposition de
+        conception temporaire ; elle ne constitue pas la charte graphique officielle de l'organisation.
+      </p>
+
+      <h2>Crédits des photographies et illustrations</h2>
+      <p>
+        Les photographies du site montrent des activités de {siteConfig.nom}. Elles appartiennent à l'organisation
+        ({creditPhotos}). Toute personne figurant sur une photo peut demander son retrait au moyen du
+        <a href="/contact/">formulaire de contact</a>.
+      </p>
+      <p>
+        Les illustrations ont été créées spécialement pour le site. Elles évoquent les paysages de la région des
+        Grands Lacs et ne représentent aucune personne réelle.
+      </p>
+      <ul class="credits">
+        {
+          credits.utilisees.map((c) => (
+            <li>
+              <strong>{c.titre}</strong> — {c.auteur}
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2>Liens externes</h2>
+      <p>
+        Les liens vers d'autres sites sont fournis à titre d'information. {siteConfig.nom} n'est pas responsable du
+        contenu de ces sites.
+      </p>
+
+      <h2>Données personnelles</h2>
+      <p>
+        Le traitement des données transmises par le formulaire de contact est décrit dans notre{' '}
+        <a href="/confidentialite/">politique de confidentialité</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .infos {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    gap: var(--e-2) var(--e-4);
+    margin: 0 0 var(--e-3);
+  }
+
+  .infos dt {
+    font-weight: 600;
+  }
+
+  .infos dd {
+    margin: 0;
+  }
+
+  .credits {
+    font-size: var(--t-petit);
+  }
+</style>

@@ -1,0 +1,216 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icone from '../components/Icone.astro';
+import NoteEditoriale from '../components/NoteEditoriale.astro';
+import AppelAction from '../components/AppelAction.astro';
+import { presentation, mission, vision, valeurs, domaines, approche } from '../data/institution';
+import { afficherNotesEditoriales } from '../data/site-config';
+
+const afficherVision = vision.valide || afficherNotesEditoriales;
+---
+
+<BaseLayout
+  titre="À propos"
+  description="Découvrez Justicia Great Lakes Africa : sa mission, ses valeurs, ses domaines d'intervention et son approche en faveur des droits humains, de la paix et de la jeunesse."
+>
+  <PageHero
+    titre="À propos de Justicia Great Lakes Africa"
+    chapeau="Une organisation engagée pour les droits humains, la justice, la paix, la bonne gouvernance et l'engagement des jeunes dans la région des Grands Lacs africains."
+    photo="photo-de-groupe"
+  />
+
+  <section class="section" aria-labelledby="presentation-titre">
+    <div class="conteneur texte-courant">
+      <h2 id="presentation-titre">Qui sommes-nous ?</h2>
+      {presentation.map((p) => <p>{p}</p>)}
+      <p><a class="lien-action" href="/en-images/">Voir nos activités en images</a></p>
+      <NoteEditoriale
+        elements={[
+          'Numéro d’enregistrement de l’asbl.',
+          'Date de création et historique (uniquement des faits et dates vérifiés).',
+          'Siège et zones d’intervention confirmées.',
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="section section--brume" aria-labelledby="mission-titre">
+    <div class="conteneur mission-vision">
+      <div class="mission-vision__bloc">
+        <h2 id="mission-titre">{mission.titre}</h2>
+        <p class="chapeau">{mission.texte}</p>
+      </div>
+      {
+        afficherVision && (
+          <div class="mission-vision__bloc">
+            <h2>{vision.titre}</h2>
+            <p class="chapeau">{vision.texte}</p>
+            {!vision.valide && (
+              <NoteEditoriale>
+                <p>Formulation de travail proposée : à valider par JGL Africa. Elle n'apparaît pas sur le site public tant que `vision.valide` vaut `false` (src/data/institution.ts).</p>
+              </NoteEditoriale>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="valeurs-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="valeurs-titre">Nos valeurs</h2>
+        <p>Six valeurs guident notre action et notre manière de travailler avec les communautés.</p>
+      </div>
+      <ul class="grille grille--3 liste-valeurs" role="list">
+        {
+          valeurs.map((v) => (
+            <li>
+              <span class="liste-valeurs__icone">
+                <Icone nom={v.icone} taille={36} />
+              </span>
+              <h3>{v.titre}</h3>
+              <p>{v.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--brume" aria-labelledby="domaines-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="domaines-titre">Nos domaines d'intervention</h2>
+      </div>
+      <ul class="liste-domaines" role="list">
+        {
+          domaines.map((d) => (
+            <li>
+              <h3>{d.titre}</h3>
+              <p>{d.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p><a class="lien-action" href="/programmes/">Découvrir les programmes qui les mettent en œuvre</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="approche-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="approche-titre">Notre approche</h2>
+        <p>
+          Nous privilégions une approche de proximité, qui associe les communautés et fait des jeunes des
+          acteurs à part entière.
+        </p>
+      </div>
+      <ul class="grille grille--2 approche" role="list">
+        {
+          approche.map((a) => (
+            <li>
+              <h3>{a.titre}</h3>
+              <p>{a.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <NoteEditoriale
+        elements={[
+          'Équipe : noms, fonctions et courtes présentations, uniquement avec l’accord des personnes.',
+          'Organes de gouvernance (conseil d’administration, assemblée générale…), si l’organisation souhaite les présenter.',
+          'Partenaires : uniquement ceux qui ont donné leur accord écrit, avec leurs logos autorisés.',
+        ]}
+      />
+    </div>
+  </section>
+
+  <AppelAction
+    titre="Collaborer avec JGL Africa"
+    texte="Vous partagez nos valeurs et souhaitez collaborer, échanger ou soutenir nos actions ? Nous serons heureux d'en discuter."
+    principal={{ libelle: 'Nous contacter', href: '/contact/' }}
+    secondaire={{ libelle: 'Nos programmes', href: '/programmes/' }}
+  />
+</BaseLayout>
+
+<style>
+  .mission-vision {
+    display: grid;
+    gap: var(--e-5);
+  }
+
+  @media (min-width: 52em) {
+    .mission-vision {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      gap: var(--e-6);
+    }
+  }
+
+  .mission-vision__bloc {
+    border-top: 4px solid var(--lac);
+    padding-top: var(--e-4);
+  }
+
+  .mission-vision__bloc .chapeau {
+    color: var(--encre);
+    font-family: var(--police-titres);
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    line-height: 1.5;
+  }
+
+  .liste-valeurs,
+  .liste-domaines,
+  .approche {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .liste-valeurs h3 {
+    margin: var(--e-3) 0 var(--e-2);
+  }
+
+  .liste-valeurs p,
+  .liste-domaines p,
+  .approche p {
+    color: var(--encre-douce);
+    margin: 0;
+  }
+
+  .liste-valeurs__icone {
+    color: var(--lac);
+  }
+
+  .liste-domaines {
+    display: grid;
+    gap: 0 var(--e-5);
+    margin-bottom: var(--e-4);
+  }
+
+  @media (min-width: 44em) {
+    .liste-domaines {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .liste-domaines li {
+    padding-block: var(--e-4);
+    border-top: 1px solid var(--trait);
+  }
+
+  .liste-domaines h3 {
+    font-size: var(--t-moyen);
+    margin-bottom: var(--e-2);
+  }
+
+  .approche li {
+    padding-left: var(--e-4);
+    border-left: 4px solid var(--mais);
+  }
+
+  .approche h3 {
+    margin-bottom: var(--e-2);
+  }
+</style>

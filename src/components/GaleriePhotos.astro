@@ -1,0 +1,47 @@
+---
+/**
+ * Grille de photos légendées (pages de programmes, page « En images »).
+ * Pas de carrousel ni de défilement automatique : toutes les photos sont visibles.
+ */
+import Photo from './Photo.astro';
+import type { IdPhoto } from '../data/photos';
+import { creditPhotos } from '../data/photos';
+
+interface Props {
+  photos: IdPhoto[];
+  /** Afficher la mention de crédit sous la grille. */
+  credit?: boolean;
+}
+
+const { photos, credit = true } = Astro.props;
+---
+
+<div class="galerie">
+  <ul class="galerie__grille" role="list">
+    {
+      photos.map((id) => (
+        <li>
+          <Photo id={id} ratio="3 / 2" legende sizes="(min-width: 64em) 22rem, (min-width: 40em) 45vw, 100vw" />
+        </li>
+      ))
+    }
+  </ul>
+  {credit && <p class="galerie__credit">{creditPhotos}</p>}
+</div>
+
+<style>
+  .galerie__grille {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--e-5) var(--e-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .galerie__credit {
+    margin-top: var(--e-4);
+    font-size: var(--t-petit);
+    color: var(--encre-douce);
+  }
+</style>

@@ -1,0 +1,32 @@
+# Configuration de déploiement Netlify — site statique Astro.
+# Aucun secret ne doit figurer dans ce fichier : les variables sensibles se
+# définissent dans le tableau de bord Netlify (Site configuration → Environment variables).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# En-têtes de sécurité applicables à toutes les pages.
+# Le site n'utilise aucun script, police ou ressource tierce : la politique
+# de sécurité du contenu (CSP) peut donc rester stricte.
+# Si vous ajoutez un service externe (statistiques, vidéo intégrée…),
+# il faudra adapter la directive correspondante.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+
+# Mise en cache longue des ressources générées (noms de fichiers versionnés par Astro).
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Aucune règle de redirection générique : chaque page possède son propre fichier HTML.

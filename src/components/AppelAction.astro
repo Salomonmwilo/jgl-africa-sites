@@ -1,0 +1,105 @@
+---
+/**
+ * Bandeau d'appel à l'engagement, réutilisable en bas de page.
+ * Avec `photo`, le bandeau est posé sur une photo voilée de bleu nuit et son contenu est centré.
+ */
+import Photo from './Photo.astro';
+import type { IdPhoto } from '../data/photos';
+
+interface Props {
+  titre: string;
+  texte: string;
+  principal: { libelle: string; href: string };
+  secondaire?: { libelle: string; href: string };
+  photo?: IdPhoto;
+}
+
+const { titre, texte, principal, secondaire, photo } = Astro.props;
+---
+
+<section
+  class:list={['section', 'section--nuit', 'appel', photo ? 'appel--photo' : 'motif-courbes']}
+  aria-labelledby="appel-titre"
+>
+  {
+    photo && (
+      <>
+        <Photo id={photo} remplir rogner decorative sizes="100vw" />
+        <div class="appel__voile" aria-hidden="true" />
+      </>
+    )
+  }
+  <div class="conteneur appel__grille">
+    <div>
+      <h2 id="appel-titre">{titre}</h2>
+      <p>{texte}</p>
+    </div>
+    <div class="groupe-boutons">
+      <a class="bouton bouton--principal" href={principal.href}>{principal.libelle}</a>
+      {secondaire && <a class="bouton bouton--secondaire" href={secondaire.href}>{secondaire.libelle}</a>}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Fond vert-turquoise : distingue le bandeau du pied de page bleu nuit. */
+  .appel {
+    background-color: var(--lac);
+    --focus: var(--blanc);
+  }
+
+  .appel__grille {
+    display: grid;
+    gap: var(--e-4);
+    align-items: center;
+  }
+
+  @media (min-width: 52em) {
+    .appel:not(.appel--photo) .appel__grille {
+      grid-template-columns: minmax(0, 1.4fr) auto;
+      gap: var(--e-6);
+    }
+  }
+
+  .appel p {
+    font-size: var(--t-moyen);
+    color: var(--blanc);
+    max-width: 40rem;
+    margin: 0;
+  }
+
+  /* Variante photo */
+  .appel--photo {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--nuit);
+    padding-block: var(--e-7);
+    --focus: var(--mais);
+  }
+
+  .appel__voile {
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 42, 71, 0.8);
+  }
+
+  .appel--photo .appel__grille {
+    position: relative;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .appel--photo h2 {
+    font-size: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+    max-width: 22ch;
+    margin-inline: auto;
+  }
+
+  .appel--photo p {
+    margin-inline: auto;
+  }
+
+  .appel--photo .groupe-boutons {
+    justify-content: center;
+  }
+</style>

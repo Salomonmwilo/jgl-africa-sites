@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import GaleriePhotos from '../components/GaleriePhotos.astro';
+import AppelAction from '../components/AppelAction.astro';
+import { ordreGalerie } from '../data/photos';
+
+// Regroupement des photos par type d'activité (d'après ce qu'elles montrent).
+const formations = ordreGalerie.filter((id) =>
+  ['salle-de-formation', 'travaux-en-groupe', 'restitution-travaux', 'intervention-formation', 'prise-de-parole', 'photo-de-groupe', 'equipe-accueil'].includes(id),
+);
+const procesFictif = ordreGalerie.filter((id) => id.startsWith('proces-fictif') || id.startsWith('participants-en-robe'));
+const autres = ordreGalerie.filter((id) => !formations.includes(id) && !procesFictif.includes(id));
+---
+
+<BaseLayout
+  titre="En images"
+  description="Photos des activités de Justicia Great Lakes Africa : formations aux droits humains, travaux en groupe et procès fictifs avec de jeunes participants."
+>
+  <PageHero
+    titre="Nos activités en images"
+    chapeau="Formations, travaux en groupe, procès fictifs : quelques moments des activités menées par Justicia Great Lakes Africa avec les jeunes."
+    ariane={[{ libelle: 'À propos', href: '/a-propos/' }]}
+  />
+
+  <section class="section" aria-labelledby="formations-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="formations-titre">Formations et ateliers</h2>
+        <p>Sessions de formation, travaux en groupe et restitutions, au Centre de lecture et d'animation culturelle (CLAC) de Bukavu.</p>
+      </div>
+      <GaleriePhotos photos={formations} credit={false} />
+    </div>
+  </section>
+
+  <section class="section section--brume" aria-labelledby="proces-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="proces-titre">Procès fictifs</h2>
+        <p>Des jeunes, en robe d'avocat, se mettent en situation pour comprendre le fonctionnement de la justice.</p>
+      </div>
+      <GaleriePhotos photos={procesFictif} credit={false} />
+    </div>
+  </section>
+
+  {
+    autres.length > 0 && (
+      <section class="section" aria-labelledby="participants-titre">
+        <div class="conteneur">
+          <div class="entete-section">
+            <h2 id="participants-titre">Les participants</h2>
+          </div>
+          <GaleriePhotos photos={autres} />
+        </div>
+      </section>
+    )
+  }
+
+  <AppelAction
+    titre="Participer à nos activités"
+    texte="Vous souhaitez prendre part à une prochaine formation ou collaborer avec nous ? Écrivez-nous."
+    principal={{ libelle: 'Nous contacter', href: '/contact/' }}
+    secondaire={{ libelle: 'Nos programmes', href: '/programmes/' }}
+  />
+</BaseLayout>

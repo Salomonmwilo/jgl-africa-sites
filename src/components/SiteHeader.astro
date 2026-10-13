@@ -1,0 +1,328 @@
+---
+/**
+ * En-tête du site : identité, navigation principale et menu mobile accessible.
+ * Le menu mobile suit le motif « disclosure » (bouton + liste) :
+ *  - sans JavaScript, la navigation reste entièrement visible ;
+ *  - la touche Échap referme le menu et rend le focus au bouton.
+ */
+import { siteConfig } from '../data/site-config';
+import { navigationPrincipale, appelEnTete } from '../data/navigation';
+import { t } from '../i18n/fr';
+
+interface Props {
+  /** En-tête bleu nuit (page d'accueil, au-dessus de la grande photo). */
+  sombre?: boolean;
+}
+
+const { sombre = false } = Astro.props;
+const chemin = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+
+function etatLien(href: string): 'page' | 'true' | undefined {
+  if (href === chemin) return 'page';
+  if (href !== '/' && chemin.startsWith(href)) return 'true';
+  return undefined;
+}
+---
+
+<header class:list={['entete-site', { 'entete-site--sombre': sombre }]}>
+  <div class="conteneur entete-site__barre">
+    <a class="identite" href="/">
+      {
+        siteConfig.logo ? (
+          <img src={siteConfig.logo} alt={`${siteConfig.nom} — accueil`} height="48" />
+        ) : (
+          <span class="identite__texte">
+            <span class="identite__nom">Justicia</span>
+            <span class="identite__sous-nom">Great Lakes Africa</span>
+            <span class="visuellement-masque"> — accueil</span>
+          </span>
+        )
+      }
+    </a>
+
+    <nav class="navigation" aria-label={t.navigationPrincipale}>
+      <button
+        class="navigation__bouton"
+        type="button"
+        aria-expanded="false"
+        aria-controls="menu-principal"
+        hidden
+      >
+        <svg class="navigation__icone" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <path class="barre barre--1" d="M3 6h18" />
+          <path class="barre barre--2" d="M3 12h18" />
+          <path class="barre barre--3" d="M3 18h18" />
+        </svg>
+        <span class="navigation__libelle">{t.menu}</span>
+      </button>
+
+      <ul id="menu-principal" class="navigation__liste">
+        {
+          navigationPrincipale.map((lien) => (
+            <li>
+              <a class="navigation__lien" href={lien.href} aria-current={etatLien(lien.href)}>
+                {lien.libelle}
+              </a>
+            </li>
+          ))
+        }
+        <li class="navigation__appel">
+          <a class="bouton bouton--principal" href={appelEnTete.href} aria-current={etatLien(appelEnTete.href)}>
+            {appelEnTete.libelle}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .entete-site {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--trait);
+  }
+
+  /* Variante sombre (accueil) */
+  .entete-site--sombre {
+    background: var(--nuit);
+    border-bottom-color: rgba(255, 255, 255, 0.14);
+    --focus: var(--mais);
+  }
+
+  .entete-site--sombre .identite {
+    color: #ffffff;
+  }
+
+  .entete-site--sombre .identite__sous-nom {
+    color: var(--mais);
+  }
+
+  .entete-site--sombre .navigation__lien {
+    color: #ffffff;
+  }
+
+  .entete-site--sombre .navigation__lien:hover {
+    color: #ffffff;
+    border-bottom-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .entete-site--sombre .navigation__lien[aria-current] {
+    color: #ffffff;
+    border-bottom-color: var(--mais);
+  }
+
+  .entete-site--sombre .navigation__bouton {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .entete-site__barre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e-4);
+    min-height: var(--hauteur-entete);
+  }
+
+  .identite {
+    display: inline-flex;
+    align-items: center;
+    padding-block: var(--e-2);
+    text-decoration: none;
+    color: var(--nuit);
+  }
+
+  .identite__texte {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+    border-left: 4px solid var(--mais);
+    padding-left: 0.65rem;
+  }
+
+  .identite__nom {
+    font-family: var(--police-titres);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .identite__sous-nom {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--nuit-700);
+  }
+
+  .navigation__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--e-1) var(--e-2);
+  }
+
+  .navigation__lien {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 0.6rem;
+    color: var(--encre);
+    font-weight: 550;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .navigation__lien:hover {
+    color: var(--nuit);
+    border-bottom-color: var(--trait);
+  }
+
+  .navigation__lien[aria-current] {
+    color: var(--nuit);
+    border-bottom-color: var(--lac);
+  }
+
+  .navigation__appel {
+    margin-left: var(--e-2);
+  }
+
+  .navigation__bouton {
+    display: none;
+    align-items: center;
+    gap: var(--e-2);
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    padding: 0.4rem 0.8rem;
+    background: transparent;
+    color: var(--nuit);
+    border: 2px solid var(--nuit);
+    border-radius: var(--rayon);
+    font: 600 1rem/1 var(--police-texte);
+    cursor: pointer;
+  }
+
+  .navigation__icone .barre {
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    transform-origin: 12px 12px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .navigation__bouton[aria-expanded='true'] .barre--1 {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .navigation__bouton[aria-expanded='true'] .barre--2 {
+    opacity: 0;
+  }
+  .navigation__bouton[aria-expanded='true'] .barre--3 {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* Écrans étroits : menu repliable (uniquement si JavaScript est actif) */
+  @media (max-width: 63.99em) {
+    .entete-site__barre {
+      flex-wrap: wrap;
+    }
+
+    :global(.js) .navigation__bouton {
+      display: inline-flex;
+    }
+
+    .navigation {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .navigation__liste {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      padding-bottom: var(--e-3);
+    }
+
+    :global(.js) .navigation__liste {
+      display: none;
+      padding-top: var(--e-3);
+    }
+
+    :global(.js) .navigation__bouton[aria-expanded='true'] + .navigation__liste {
+      display: flex;
+    }
+
+    .navigation__lien {
+      width: 100%;
+      border-bottom: 1px solid var(--trait);
+      border-left: 4px solid transparent;
+      padding-left: var(--e-3);
+    }
+
+    .navigation__lien[aria-current] {
+      border-bottom-color: var(--trait);
+      border-left-color: var(--lac);
+    }
+
+    .entete-site--sombre .navigation__lien,
+    .entete-site--sombre .navigation__lien[aria-current] {
+      border-bottom-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .entete-site--sombre .navigation__lien[aria-current] {
+      border-left-color: var(--mais);
+    }
+
+    .navigation__appel {
+      margin: var(--e-3) 0 0;
+    }
+
+    .navigation__appel .bouton {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .navigation__bouton {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  // Amélioration progressive : la classe « js » est posée dans <head> (BaseLayout).
+  const bouton = document.querySelector<HTMLButtonElement>('.navigation__bouton');
+  const liste = document.getElementById('menu-principal');
+
+  if (bouton && liste) {
+    bouton.hidden = false;
+    const libelle = bouton.querySelector('.navigation__libelle');
+
+    const definirEtat = (ouvert: boolean) => {
+      bouton.setAttribute('aria-expanded', String(ouvert));
+      if (libelle) libelle.textContent = ouvert ? 'Fermer' : 'Menu';
+    };
+
+    bouton.addEventListener('click', () => {
+      definirEtat(bouton.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('keydown', (evenement) => {
+      if (evenement.key === 'Escape' && bouton.getAttribute('aria-expanded') === 'true') {
+        definirEtat(false);
+        bouton.focus();
+      }
+    });
+
+    // Referme le menu si l'écran s'élargit.
+    window.matchMedia('(min-width: 64em)').addEventListener('change', (e) => {
+      if (e.matches) definirEtat(false);
+    });
+  }
+</script>

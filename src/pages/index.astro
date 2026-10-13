@@ -1,0 +1,564 @@
+---
+/**
+ * Page d'accueil.
+ * Composition inspirée des conventions des sites d'ONG (maquette de référence fournie par
+ * l'équipe) : grande photo voilée, tuiles d'action, bloc « Qui sommes-nous » posé sur une
+ * photo, tuiles de programmes, bandeau d'appel sur photo et bande de photos.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icone from '../components/Icone.astro';
+import Photo from '../components/Photo.astro';
+import ProgrammeTuile from '../components/ProgrammeTuile.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import EtatVide from '../components/EtatVide.astro';
+import AppelAction from '../components/AppelAction.astro';
+import { accueil, domaines, vision, presentation } from '../data/institution';
+import type { IconeNom } from '../data/institution';
+import type { IdPhoto } from '../data/photos';
+import { creditPhotos } from '../data/photos';
+import { programmesTries, articlesPublies } from '../lib/contenus';
+
+const programmes = await programmesTries();
+const observatoire = programmes.find((p) => p.data.rubrique);
+const programmesPrincipaux = programmes.filter((p) => !p.data.rubrique);
+const dernieresActualites = (await articlesPublies()).slice(0, 3);
+
+const actions: { titre: string; href: string; icone: IconeNom; photo: IdPhoto; couleur: 'lac' | 'nuit' | 'mais' }[] = [
+  { titre: 'Participer à nos formations', href: '/programmes/', icone: 'livre', photo: 'travaux-en-groupe', couleur: 'lac' },
+  { titre: 'Collaborer avec nous', href: '/contact/', icone: 'mains', photo: 'proces-fictif-groupe', couleur: 'nuit' },
+  { titre: 'Soutenir nos actions', href: '/soutenir/', icone: 'coeur', photo: 'photo-de-groupe', couleur: 'mais' },
+];
+
+const bande: IdPhoto[] = ['proces-fictif-plaidoirie', 'restitution-travaux', 'participants-en-robe', 'intervention-formation'];
+---
+
+<BaseLayout
+  description="Justicia Great Lakes Africa (JGL Africa) défend les droits humains et promeut la culture de la paix et la bonne gouvernance en RDC et dans la région des Grands Lacs, en formant les jeunes."
+  enteteSombre
+>
+  <!-- Grande photo d'introduction -->
+  <section class="hero" aria-labelledby="hero-titre">
+    <Photo id="salle-de-formation" remplir rogner priorite sizes="100vw" />
+    <div class="hero__voile" aria-hidden="true"></div>
+    <div class="conteneur hero__contenu">
+      <p class="hero__lieu">Bukavu, République démocratique du Congo</p>
+      <h1 id="hero-titre">{accueil.titre}</h1>
+      <p class="hero__chapeau">{accueil.introduction}</p>
+      <div class="groupe-boutons">
+        <a class="bouton bouton--principal" href="/a-propos/">Découvrir notre organisation</a>
+        <a class="bouton bouton--secondaire" href="/programmes/">Nos programmes</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tuiles d'action, à cheval sur la photo -->
+  <nav class="conteneur actions" aria-label="Agir avec JGL Africa">
+    <ul role="list">
+      {
+        actions.map((a) => (
+          <li class:list={['action', `action--${a.couleur}`]}>
+            <Photo id={a.photo} remplir rogner decorative sizes="(min-width: 52em) 22rem, 100vw" />
+            <a class="action__lien" href={a.href}>
+              <Icone nom={a.icone} taille={40} />
+              <span>{a.titre}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <!-- Qui sommes-nous -->
+  <section class="section apropos" aria-labelledby="apropos-titre">
+    <div class="conteneur apropos__grille">
+      <Photo id="photo-de-groupe" class="apropos__photo" ratio="4 / 3" sizes="(min-width: 56em) 60vw, 100vw" legende />
+      <div class="apropos__panneau">
+        <h2 id="apropos-titre">Qui sommes-nous ?</h2>
+        <p>{presentation[0]}</p>
+        <blockquote class="apropos__vision">
+          <p>{vision.texte}</p>
+          <footer>{vision.titre}</footer>
+        </blockquote>
+        <a class="bouton bouton--principal" href="/a-propos/">En savoir plus</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Domaines d'intervention -->
+  <section class="section section--brume" aria-labelledby="domaines-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="domaines-titre">Nos domaines d'intervention</h2>
+        <p>
+          Nos actions s'articulent autour de six domaines complémentaires, au service d'une région où les droits de
+          chacun sont garantis et respectés.
+        </p>
+      </div>
+      <ul class="grille grille--3 domaines" role="list">
+        {
+          domaines.map((d) => (
+            <li class="domaine">
+              <span class="domaine__icone">
+                <Icone nom={d.icone} />
+              </span>
+              <h3>{d.titre}</h3>
+              <p>{d.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Programmes -->
+  <section class="section" aria-labelledby="programmes-titre">
+    <div class="conteneur">
+      <div class="entete-section entete-section--ligne">
+        <div>
+          <h2 id="programmes-titre">Nos programmes</h2>
+          <p>Des programmes pour former, sensibiliser et accompagner, en particulier les jeunes.</p>
+        </div>
+        <a class="lien-action" href="/programmes/">Voir tous les programmes</a>
+      </div>
+      <div class="tuiles">
+        {programmesPrincipaux.map((p, i) => <ProgrammeTuile programme={p} couleur={i % 2 ? 'lac' : 'nuit'} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Observatoire Jeunesse pour la Paix -->
+  {
+    observatoire && (
+      <section class="section observatoire" aria-labelledby="observatoire-titre">
+        <div class="conteneur observatoire__grille">
+          <div>
+            <p class="observatoire__type">Une rubrique de JGL Africa</p>
+            <h2 id="observatoire-titre">{observatoire.data.titre}</h2>
+            <p class="observatoire__texte">{observatoire.data.resume}</p>
+            <p>
+              Publications, analyses, initiatives et ressources : l'Observatoire donne la parole aux jeunes et éclaire
+              les enjeux de la paix dans la région.
+            </p>
+            <a class="bouton bouton--principal" href={`/programmes/${observatoire.id}/`}>
+              Découvrir l'Observatoire
+            </a>
+          </div>
+          {observatoire.data.photo && (
+            <Photo id={observatoire.data.photo} class="observatoire__visuel" ratio="4 / 3" sizes="(min-width: 52em) 45vw, 100vw" legende />
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Actualités -->
+  <section class="section section--brume" aria-labelledby="actualites-titre">
+    <div class="conteneur">
+      <div class="entete-section entete-section--ligne">
+        <div>
+          <h2 id="actualites-titre">Dernières actualités</h2>
+          <p>Activités, annonces et publications de Justicia Great Lakes Africa.</p>
+        </div>
+        {dernieresActualites.length > 0 && <a class="lien-action" href="/actualites/">Toutes les actualités</a>}
+      </div>
+      {
+        dernieresActualites.length > 0 ? (
+          <div class="grille grille--3">
+            {dernieresActualites.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        ) : (
+          <EtatVide
+            niveauTitre={3}
+            titre="Nos premières publications arrivent bientôt"
+            texte="Les actualités, comptes rendus d'activités et publications de JGL Africa seront publiés ici. En attendant, découvrez nos programmes ou écrivez-nous."
+            lien={{ libelle: 'Découvrir nos programmes', href: '/programmes/' }}
+          />
+        )
+      }
+    </div>
+  </section>
+
+  <AppelAction
+    photo="participants-en-robe-groupe"
+    titre="Aidez-nous à former les bâtisseurs de paix de demain"
+    texte="Organisations de la société civile, partenaires institutionnels, jeunes, bénévoles : rejoignez-nous pour promouvoir les droits humains et la paix dans la région des Grands Lacs."
+    principal={{ libelle: 'Soutenir nos actions', href: '/soutenir/' }}
+    secondaire={{ libelle: 'Nous contacter', href: '/contact/' }}
+  />
+
+  <!-- Bande de photos -->
+  <section class="bande" aria-labelledby="bande-titre">
+    <h2 id="bande-titre" class="visuellement-masque">Nos activités en images</h2>
+    <ul class="bande__liste" role="list">
+      {
+        bande.map((id) => (
+          <li>
+            <Photo id={id} ratio="4 / 3" rogner sizes="(min-width: 52em) 25vw, 50vw" />
+          </li>
+        ))
+      }
+    </ul>
+    <p class="conteneur bande__lien">
+      <a class="lien-action" href="/en-images/">Voir toutes nos activités en images</a>
+      <span>{creditPhotos}</span>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- Grande photo ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--nuit);
+    color: #ffffff;
+    --focus: var(--mais);
+    padding-block: var(--e-6) calc(var(--e-7) + var(--e-5));
+  }
+
+  /* Voile bleu nuit : garantit le contraste du texte quelle que soit la photo. */
+  .hero__voile {
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 42, 71, 0.86);
+  }
+
+  @media (min-width: 56em) {
+    .hero {
+      min-height: min(86vh, 44rem);
+      display: flex;
+      align-items: center;
+    }
+
+    .hero__voile {
+      background: linear-gradient(90deg, rgba(14, 42, 71, 0.94) 0%, rgba(14, 42, 71, 0.86) 50%, rgba(14, 42, 71, 0.45) 100%);
+    }
+  }
+
+  .hero__contenu {
+    position: relative;
+  }
+
+  .hero__contenu > * {
+    max-width: 40rem;
+  }
+
+  .hero__lieu {
+    display: inline-block;
+    margin-bottom: var(--e-3);
+    padding-left: var(--e-2);
+    border-left: 3px solid var(--mais);
+    font-size: var(--t-petit);
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .hero h1 {
+    color: #ffffff;
+    font-size: clamp(2.25rem, 1.4rem + 3.4vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    max-width: 18ch;
+  }
+
+  .hero__chapeau {
+    font-size: var(--t-moyen);
+    line-height: 1.55;
+    color: #e3ebf2;
+    margin-bottom: var(--e-5);
+  }
+
+  .hero .bouton--secondaire {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .hero .bouton--secondaire:hover {
+    background: #ffffff;
+    color: var(--nuit);
+  }
+
+  /* ---------- Tuiles d'action ---------- */
+  .actions {
+    position: relative;
+    margin-top: calc(-1 * var(--e-7));
+  }
+
+  .actions ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--e-3);
+  }
+
+  @media (min-width: 52em) {
+    .actions ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--e-4);
+    }
+  }
+
+  .action {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--rayon-grand);
+    box-shadow: 0 10px 30px -12px rgba(14, 42, 71, 0.45);
+  }
+
+  /* Voile coloré sur la photo de chaque tuile */
+  .action::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .action--lac::before {
+    background: rgba(27, 111, 105, 0.93);
+  }
+
+  .action--nuit::before {
+    background: rgba(29, 85, 119, 0.94);
+  }
+
+  .action--mais::before {
+    background: rgba(228, 166, 60, 0.95);
+  }
+
+  .action__lien {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+    min-height: 7.5rem;
+    padding: var(--e-4);
+    color: #ffffff;
+    font-family: var(--police-titres);
+    font-size: 1.3125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-decoration: none;
+  }
+
+  @media (min-width: 52em) {
+    .action__lien {
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      min-height: 11rem;
+    }
+  }
+
+  .action--mais .action__lien {
+    color: var(--nuit);
+  }
+
+  .action__lien:hover span {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .action__lien:focus-visible {
+    outline: 3px solid var(--nuit);
+    outline-offset: -6px;
+    border-radius: var(--rayon-grand);
+  }
+
+  .action--mais .action__lien:focus-visible {
+    outline-color: var(--nuit);
+  }
+
+  .action--lac .action__lien:focus-visible,
+  .action--nuit .action__lien:focus-visible {
+    outline-color: #ffffff;
+  }
+
+  .action :global(.icone) {
+    flex-shrink: 0;
+  }
+
+  /* ---------- Qui sommes-nous ---------- */
+  .apropos__grille {
+    display: grid;
+  }
+
+  @media (min-width: 56em) {
+    .apropos__grille {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+    }
+
+    .apropos__panneau {
+      margin-left: -6rem;
+      position: relative;
+    }
+
+    /* La légende reste lisible à côté du bloc qui chevauche la photo. */
+    .apropos :global(.apropos__photo figcaption) {
+      padding-right: 7rem;
+    }
+  }
+
+  .apropos__panneau {
+    background: var(--nuit);
+    color: #e3ebf2;
+    padding: var(--e-5);
+    border-radius: var(--rayon-grand);
+    border-top: 6px solid var(--mais);
+    --focus: var(--mais);
+  }
+
+  @media (max-width: 55.99em) {
+    .apropos__panneau {
+      margin-top: var(--e-4);
+    }
+  }
+
+  .apropos__panneau h2 {
+    color: #ffffff;
+  }
+
+  .apropos__vision {
+    margin: var(--e-4) 0 var(--e-5);
+    padding-left: var(--e-3);
+    border-left: 3px solid var(--mais);
+  }
+
+  .apropos__vision p {
+    font-family: var(--police-titres);
+    font-size: clamp(1.1875rem, 1.05rem + 0.6vw, 1.4375rem);
+    line-height: 1.4;
+    color: #ffffff;
+    margin-bottom: var(--e-2);
+  }
+
+  .apropos__vision footer {
+    font-size: var(--t-petit);
+    font-weight: 600;
+    color: var(--mais);
+  }
+
+  /* ---------- Domaines ---------- */
+  .domaines {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .domaine h3 {
+    margin-top: var(--e-3);
+    margin-bottom: var(--e-2);
+  }
+
+  .domaine p {
+    color: var(--encre-douce);
+    margin: 0;
+  }
+
+  .domaine__icone {
+    display: inline-flex;
+    padding: 0.6rem;
+    border-radius: 50%;
+    background: var(--blanc);
+    color: var(--nuit-700);
+    border: 1px solid var(--trait);
+  }
+
+  .entete-section--ligne {
+    max-width: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--e-3) var(--e-5);
+  }
+
+  .entete-section--ligne > div {
+    max-width: var(--largeur-texte);
+  }
+
+  .entete-section--ligne p {
+    margin: 0;
+  }
+
+  /* ---------- Programmes ---------- */
+  .tuiles {
+    display: grid;
+    gap: var(--e-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+
+  /* ---------- Observatoire ---------- */
+  .observatoire {
+    background: var(--lac-clair);
+  }
+
+  .observatoire__grille {
+    display: grid;
+    gap: var(--e-5);
+    align-items: center;
+  }
+
+  @media (min-width: 52em) {
+    .observatoire__grille {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: var(--e-6);
+    }
+  }
+
+  .observatoire__type {
+    margin-bottom: var(--e-2);
+    font-weight: 600;
+    color: var(--lac);
+  }
+
+  .observatoire__texte {
+    font-size: var(--t-moyen);
+    color: var(--encre);
+  }
+
+  .observatoire p {
+    max-width: 38rem;
+  }
+
+  .observatoire .bouton {
+    margin-top: var(--e-3);
+  }
+
+  /* ---------- Bande de photos ---------- */
+  .bande__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 52em) {
+    .bande__liste {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .bande__liste :global(img) {
+    border-radius: 0;
+  }
+
+  .bande__lien {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--e-2) var(--e-4);
+    padding-block: var(--e-4) var(--e-5);
+    margin: 0 auto;
+  }
+
+  .bande__lien span {
+    font-size: var(--t-petit);
+    color: var(--encre-douce);
+  }
+</style>

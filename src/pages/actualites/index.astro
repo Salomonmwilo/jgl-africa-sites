@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import EtatVide from '../../components/EtatVide.astro';
+import { articlesPublies } from '../../lib/contenus';
+import { categories, type CleCategorie } from '../../data/categories';
+
+const articles = await articlesPublies();
+// Seules les catégories contenant au moins un article ont une page.
+const categoriesActives = (Object.keys(categories) as CleCategorie[]).filter((c) =>
+  articles.some((a) => a.data.categorie === c),
+);
+---
+
+<BaseLayout
+  titre="Actualités et publications"
+  description="Actualités, comptes rendus d'activités et publications de Justicia Great Lakes Africa sur les droits humains, la paix, la jeunesse et la bonne gouvernance."
+>
+  <PageHero
+    titre="Actualités et publications"
+    chapeau="Activités, annonces, analyses et ressources de Justicia Great Lakes Africa et de l'Observatoire Jeunesse pour la Paix."
+  />
+
+  <section class="section" aria-label="Liste des articles">
+    <div class="conteneur">
+      {
+        categoriesActives.length > 1 && (
+          <nav class="filtres" aria-label="Catégories">
+            <ul role="list">
+              <li>
+                <a href="/actualites/" aria-current="page">Toutes</a>
+              </li>
+              {categoriesActives.map((c) => (
+                <li>
+                  <a href={`/actualites/categorie/${c}/`}>{categories[c]}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+      {
+        articles.length > 0 ? (
+          <div class="grille grille--3">
+            {articles.map((a) => (
+              <ArticleCard article={a} niveauTitre={2} />
+            ))}
+          </div>
+        ) : (
+          <EtatVide
+            titre="Nos premières publications arrivent bientôt"
+            texte="Cette rubrique accueillera les actualités de l'organisation, les comptes rendus d'activités et les publications de l'Observatoire Jeunesse pour la Paix. Revenez prochainement, ou découvrez dès maintenant nos programmes."
+            lien={{ libelle: 'Découvrir nos programmes', href: '/programmes/' }}
+          />
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section section--brume" aria-labelledby="rubriques-titre">
+    <div class="conteneur">
+      <h2 id="rubriques-titre">Les thèmes abordés</h2>
+      <ul class="themes" role="list">
+        {Object.values(categories).map((libelle) => <li>{libelle}</li>)}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .filtres ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2);
+    padding: 0;
+    margin: 0 0 var(--e-5);
+  }
+
+  .filtres a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--trait);
+    border-radius: 999px;
+    color: var(--nuit);
+    text-decoration: none;
+    font-weight: 550;
+  }
+
+  .filtres a[aria-current='page'] {
+    background: var(--nuit);
+    border-color: var(--nuit);
+    color: var(--blanc);
+  }
+
+  .themes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2) var(--e-4);
+  }
+
+  .themes li {
+    padding-left: var(--e-3);
+    border-left: 3px solid var(--lac);
+    font-weight: 550;
+    color: var(--nuit);
+  }
+
+  .themes h2 {
+    font-size: var(--t-h3);
+  }
+</style>

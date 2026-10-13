@@ -1,0 +1,49 @@
+---
+/**
+ * Page d'une catégorie d'actualités (générée uniquement si la catégorie contient des articles).
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { articlesPublies, type Article } from '../../../lib/contenus';
+import { categories, type CleCategorie } from '../../../data/categories';
+
+export async function getStaticPaths() {
+  const articles = await articlesPublies();
+  return (Object.keys(categories) as CleCategorie[])
+    .map((categorie) => ({
+      params: { categorie },
+      props: { categorie, articles: articles.filter((a) => a.data.categorie === categorie) },
+    }))
+    .filter((p) => p.props.articles.length > 0);
+}
+
+interface Props {
+  categorie: CleCategorie;
+  articles: Article[];
+}
+
+const { categorie, articles } = Astro.props;
+const libelle = categories[categorie];
+---
+
+<BaseLayout
+  titre={libelle}
+  description={`Articles et publications de Justicia Great Lakes Africa dans la catégorie « ${libelle} ».`}
+>
+  <PageHero titre={libelle} ariane={[{ libelle: 'Actualités et publications', href: '/actualites/' }]} />
+  <section class="section" aria-label="Liste des articles">
+    <div class="conteneur">
+      <div class="grille grille--3">
+        {articles.map((a) => <ArticleCard article={a} niveauTitre={2} />)}
+      </div>
+      <p class="retour"><a class="lien-action" href="/actualites/">Toutes les actualités</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .retour {
+    margin-top: var(--e-5);
+  }
+</style>

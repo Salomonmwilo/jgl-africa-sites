@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import NoteEditoriale from '../components/NoteEditoriale.astro';
+import AppelAction from '../components/AppelAction.astro';
+import { siteConfig, estRenseigne, soutienFinancierConfirme } from '../data/site-config';
+
+const { soutien } = siteConfig;
+---
+
+<BaseLayout
+  titre="Soutenir nos actions"
+  description="Comment soutenir Justicia Great Lakes Africa : partenariats, collaboration, engagement bénévole et soutien à ses programmes en faveur des droits humains et de la paix."
+>
+  <PageHero
+    titre="Soutenir nos actions"
+    chapeau="Partenaires, organisations, institutions ou particuliers : plusieurs façons existent de contribuer aux actions de Justicia Great Lakes Africa."
+    photo="participants-en-robe-groupe"
+    teinte="ocre"
+  />
+
+  <section class="section" aria-labelledby="facons-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="facons-titre">Comment contribuer</h2>
+        <p>Chaque forme de soutien est examinée avec attention, en lien avec nos programmes et nos valeurs.</p>
+      </div>
+      <ul class="grille grille--3 facons" role="list">
+        <li>
+          <h3>Devenir partenaire</h3>
+          <p>
+            Organisations de la société civile, institutions, établissements d'enseignement ou organismes de
+            coopération : construisons ensemble des initiatives en faveur des droits humains et de la paix.
+          </p>
+        </li>
+        <li>
+          <h3>Mettre vos compétences à disposition</h3>
+          <p>
+            Juristes, enseignants, chercheurs, professionnels de la communication ou jeunes engagés : votre expertise
+            peut renforcer nos programmes.
+          </p>
+        </li>
+        <li>
+          <h3>Soutenir un programme</h3>
+          <p>
+            Vous souhaitez appuyer l'une de nos initiatives en particulier ? Prenons contact pour en définir les
+            modalités ensemble.
+          </p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--brume" aria-labelledby="financier-titre">
+    <div class="conteneur texte-courant">
+      <h2 id="financier-titre">Soutien financier</h2>
+      {
+        soutienFinancierConfirme ? (
+          <div class="moyens">
+            {estRenseigne(soutien.lienDonEnLigne) && (
+              <p>
+                <a class="bouton bouton--principal" href={soutien.lienDonEnLigne} rel="noopener noreferrer">
+                  Faire un don en ligne
+                </a>
+              </p>
+            )}
+            {estRenseigne(soutien.virementBancaire) && (
+              <>
+                <h3>Virement bancaire</h3>
+                <p class="moyen">{soutien.virementBancaire}</p>
+              </>
+            )}
+            {estRenseigne(soutien.paiementMobile) && (
+              <>
+                <h3>Paiement mobile</h3>
+                <p class="moyen">{soutien.paiementMobile}</p>
+              </>
+            )}
+            {estRenseigne(soutien.mentionFiscale) && <p>{soutien.mentionFiscale}</p>}
+          </div>
+        ) : (
+          <>
+            <p>
+              Les modalités de soutien financier seront communiquées directement aux personnes et organisations qui
+              nous contactent. Pour toute proposition, écrivez-nous en précisant la nature du soutien envisagé : nous
+              vous répondrons avec les informations nécessaires.
+            </p>
+            <p>
+              Par précaution, ne transmettez jamais d'argent à une personne se présentant au nom de l'organisation
+              sans avoir vérifié sa demande auprès de nous.
+            </p>
+            <p>
+              <a class="bouton bouton--principal" href="/contact/">Proposer un soutien</a>
+            </p>
+          </>
+        )
+      }
+      <NoteEditoriale
+        elements={[
+          'Moyens de paiement officiels (compte bancaire, paiement mobile, plateforme de don) : à fournir et valider par JGL Africa avant toute publication (site-config.ts → soutien).',
+          'Aucune mention de déductibilité fiscale sans avis juridique.',
+          'Aucun service de paiement ne doit être intégré sans configuration et test préalables.',
+        ]}
+      />
+    </div>
+  </section>
+
+  <AppelAction
+    titre="Parlons de votre engagement"
+    texte="Nous serons heureux d'échanger avec vous sur la manière dont vous souhaitez contribuer."
+    principal={{ libelle: 'Nous contacter', href: '/contact/' }}
+    secondaire={{ libelle: 'Découvrir nos programmes', href: '/programmes/' }}
+  />
+</BaseLayout>
+
+<style>
+  .facons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .facons li {
+    border-top: 4px solid var(--mais);
+    padding-top: var(--e-3);
+  }
+
+  .facons h3 {
+    margin-bottom: var(--e-2);
+  }
+
+  .facons p {
+    color: var(--encre-douce);
+    margin: 0;
+  }
+
+  .moyen {
+    white-space: pre-line;
+    font-weight: 600;
+  }
+</style>

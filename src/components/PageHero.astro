@@ -1,0 +1,128 @@
+---
+/**
+ * En-tête des pages intérieures : fil d'Ariane, titre, chapeau et visuel facultatif.
+ * Le visuel est soit une photo du registre (`photo`, affichée avec sa légende),
+ * soit une illustration (`illustration`).
+ */
+import Photo from './Photo.astro';
+import type { IdPhoto } from '../data/photos';
+import { t } from '../i18n/fr';
+
+interface Props {
+  titre: string;
+  chapeau?: string;
+  /** Étapes intermédiaires du fil d'Ariane (la page courante est ajoutée automatiquement). */
+  ariane?: { libelle: string; href: string }[];
+  photo?: IdPhoto;
+  illustration?: string;
+  illustrationAlt?: string;
+  teinte?: 'bleu' | 'turquoise' | 'ocre';
+}
+
+const { titre, chapeau, ariane = [], photo, illustration, illustrationAlt = '', teinte = 'bleu' } = Astro.props;
+const aUnVisuel = Boolean(photo || illustration);
+---
+
+<section class:list={['hero-page', `hero-page--${teinte}`, { 'hero-page--illustre': aUnVisuel }]}>
+  <div class="conteneur hero-page__grille">
+    <div class="hero-page__texte">
+      <nav aria-label={t.filAriane} class="ariane">
+        <ol>
+          <li><a href="/">{t.accueil}</a></li>
+          {ariane.map((e) => <li><a href={e.href}>{e.libelle}</a></li>)}
+          <li><span aria-current="page">{titre}</span></li>
+        </ol>
+      </nav>
+      <h1>{titre}</h1>
+      {chapeau && <p class="chapeau">{chapeau}</p>}
+      <slot />
+    </div>
+    {
+      photo ? (
+        <Photo
+          id={photo}
+          class="hero-page__visuel"
+          sizes="(min-width: 52em) 45vw, 100vw"
+          ratio="4 / 3"
+          priorite
+          legende
+        />
+      ) : (
+        illustration && (
+          <div class="hero-page__visuel">
+            <img src={illustration} alt={illustrationAlt} width="640" height="480" fetchpriority="high" decoding="async" />
+          </div>
+        )
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero-page {
+    padding-block: var(--e-5) var(--e-6);
+    background: var(--brume);
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .hero-page--turquoise {
+    background: var(--lac-clair);
+  }
+
+  .hero-page--ocre {
+    background: #f7efdc;
+  }
+
+  .hero-page__grille {
+    display: grid;
+    gap: var(--e-5);
+    align-items: center;
+  }
+
+  @media (min-width: 52em) {
+    .hero-page--illustre .hero-page__grille {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    }
+  }
+
+  .hero-page h1 {
+    max-width: 22ch;
+  }
+
+  .hero-page .chapeau {
+    color: var(--encre);
+  }
+
+  .hero-page__visuel img,
+  .hero-page :global(.hero-page__visuel img) {
+    width: 100%;
+    border-radius: var(--rayon-grand);
+  }
+
+  .ariane ol {
+    list-style: none;
+    margin: 0 0 var(--e-4);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--e-2);
+    font-size: var(--t-petit);
+    color: var(--encre-douce);
+  }
+
+  .ariane li + li::before {
+    content: '/';
+    margin-right: var(--e-2);
+    color: var(--encre-douce);
+  }
+
+  .ariane a {
+    color: var(--encre-douce);
+    display: inline-block;
+    padding-block: 0.15rem;
+  }
+
+  .ariane a:hover {
+    color: var(--nuit);
+  }
+</style>
