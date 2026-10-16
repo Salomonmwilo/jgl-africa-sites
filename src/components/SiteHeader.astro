@@ -29,7 +29,7 @@ function etatLien(href: string): 'page' | 'true' | undefined {
     <a class="identite" href="/">
       {
         siteConfig.logo ? (
-          <img src={siteConfig.logo} alt={`${siteConfig.nom} — accueil`} height="48" />
+          <img class="identite__logo" src={siteConfig.logo} alt={`${siteConfig.nom} — accueil`} width="120" height="52" />
         ) : (
           <span class="identite__texte">
             <span class="identite__nom">Justicia</span>
@@ -133,6 +133,20 @@ function etatLien(href: string): 'page' | 'true' | undefined {
     padding-block: var(--e-2);
     text-decoration: none;
     color: var(--nuit);
+  }
+
+  .identite__logo {
+    display: block;
+    width: auto;
+    height: 3.25rem;
+  }
+
+  /* Sur fond bleu nuit, le logo garde son fond blanc pour rester lisible. */
+  .entete-site--sombre .identite__logo {
+    box-sizing: content-box;
+    padding: 0.25rem 0.5rem;
+    background: #ffffff;
+    border-radius: var(--rayon);
   }
 
   .identite__texte {

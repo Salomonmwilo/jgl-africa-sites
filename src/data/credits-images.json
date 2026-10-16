@@ -74,13 +74,22 @@
       "usage": "Fonds décoratifs"
     },
     {
-      "fichier": "public/images/partage-jgl-africa.jpg, public/favicon.svg, public/favicon-32.png, public/apple-touch-icon.png",
-      "titre": "Image de partage et icônes du site",
-      "auteur": "Créations originales pour le site (ce ne sont pas le logo officiel de JGL Africa)",
+      "fichier": "public/images/logo-jgl-africa.png, public/favicon-32.png, public/apple-touch-icon.png",
+      "titre": "Logo officiel et icônes du site (emblème extrait du logo)",
+      "auteur": "Justicia Great Lakes Africa",
+      "licence": "Propriété de JGL Africa",
+      "source": "Fichiers fournis par l'organisation",
+      "personnes": "Aucune",
+      "usage": "En-tête, pied de page, onglet du navigateur"
+    },
+    {
+      "fichier": "public/images/partage-jgl-africa.jpg",
+      "titre": "Image de partage",
+      "auteur": "Création originale pour le site",
       "licence": "Propriété du projet — à céder à JGL Africa",
       "source": "Création originale",
       "personnes": "Aucune",
-      "usage": "Réseaux sociaux, onglet du navigateur"
+      "usage": "Réseaux sociaux"
     }
   ],
   "candidates": [

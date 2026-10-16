@@ -17,7 +17,15 @@ const annee = new Date().getFullYear();
 <footer class="pied-site">
   <div class="conteneur pied-site__grille">
     <div class="pied-site__identite">
-      <p class="pied-site__nom">{siteConfig.nom}</p>
+      {
+        siteConfig.logo ? (
+          <p class="pied-site__logo">
+            <img src={siteConfig.logo} alt={siteConfig.nom} width="200" height="87" loading="lazy" />
+          </p>
+        ) : (
+          <p class="pied-site__nom">{siteConfig.nom}</p>
+        )
+      }
       <p>
         Droits humains, justice, paix, bonne gouvernance et engagement des jeunes dans la région des
         Grands Lacs africains.
@@ -121,6 +129,18 @@ const annee = new Date().getFullYear();
     .pied-site__grille {
       grid-template-columns: 1.4fr 1fr 1.2fr 1.2fr;
     }
+  }
+
+  .pied-site__logo {
+    margin-bottom: var(--e-3);
+  }
+
+  .pied-site__logo img {
+    width: 12.5rem;
+    height: auto;
+    padding: 0.5rem 0.75rem;
+    background: #ffffff;
+    border-radius: var(--rayon);
   }
 
   .pied-site__nom {

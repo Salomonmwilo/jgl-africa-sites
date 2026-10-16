@@ -35,9 +35,9 @@ export const siteConfig = {
   /**
    * Logo officiel : chemin d'un fichier placé dans public/images/ (SVG ou PNG).
    * Tant qu'il vaut `null`, l'en-tête affiche le nom de l'organisation en texte.
-   * Exemple : '/images/logo-jgl-africa.svg'
+   * Logo actuel : public/images/logo-jgl-africa.png (fond transparent).
    */
-  logo: null as string | null,
+  logo: '/images/logo-jgl-africa.png' as string | null,
 
   /** Statut et identité juridique — à fournir par l'organisation. */
   juridique: {
