@@ -117,6 +117,15 @@ export const siteConfig = {
     fournisseur: 'netlify' as 'netlify',
     nomFormulaire: 'contact',
   },
+
+  /**
+   * Inscription à la lettre d'information (pied de page).
+   * Même fonctionnement que le formulaire de contact : Netlify Forms.
+   */
+  formulaireNewsletter: {
+    fournisseur: 'netlify' as 'netlify',
+    nomFormulaire: 'newsletter',
+  },
 } as const;
 
 /** Vrai si une valeur est réellement renseignée. */

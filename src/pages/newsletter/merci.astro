@@ -1,0 +1,19 @@
+---
+/**
+ * Page de confirmation affichée après l'inscription à la lettre d'information.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+---
+
+<BaseLayout titre="Inscription enregistrée" description="Confirmation de votre inscription à la lettre d'information de Justicia Great Lakes Africa." noindex>
+  <PageHero
+    titre="Merci pour votre inscription"
+    chapeau="Votre adresse a bien été enregistrée. Vous recevrez nos prochaines actualités par e-mail."
+  >
+    <div class="groupe-boutons">
+      <a class="bouton bouton--principal" href="/">Retour à l'accueil</a>
+      <a class="bouton bouton--secondaire" href="/actualites/">Lire nos actualités</a>
+    </div>
+  </PageHero>
+</BaseLayout>

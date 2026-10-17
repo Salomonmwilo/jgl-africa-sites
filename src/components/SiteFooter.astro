@@ -1,83 +1,169 @@
 ---
 /**
- * Pied de page institutionnel.
+ * Pied de page institutionnel :
+ *  - un bandeau « Besoin d'aide ? » avec photo, menant au formulaire de contact
+ *    (masqué sur les pages de contact, où il ferait doublon) ;
+ *  - quatre colonnes : contact, organisation, programmes, lettre d'information ;
+ *  - une ligne finale : logo, copyright, liens légaux et icônes des réseaux sociaux.
  * Les coordonnées et réseaux sociaux n'apparaissent que s'ils sont renseignés
  * dans src/data/site-config.ts.
  */
 import { siteConfig, estRenseigne, reseauxActifs } from '../data/site-config';
 import { navigationLegale } from '../data/navigation';
 import { programmesTries } from '../lib/contenus';
+import Photo from './Photo.astro';
 
 const programmes = await programmesTries();
 const { coordonnees } = siteConfig;
 const aDesCoordonnees = [coordonnees.adresse, coordonnees.telephone, coordonnees.email].some(estRenseigne);
 const annee = new Date().getFullYear();
+const afficherBandeau = !Astro.url.pathname.includes('/contact/');
+const { nomFormulaire } = siteConfig.formulaireNewsletter;
+
+/** Pictogrammes des réseaux sociaux (tracés simples, couleur héritée du texte). */
+const icones: Record<string, string> = {
+  Facebook:
+    'M13.5 21v-8h2.7l.4-3.2h-3.1V7.8c0-.9.3-1.5 1.6-1.5h1.7V3.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V13h2.8v8h3.3Z',
+  'X (Twitter)':
+    'M17.8 3h3.1l-6.8 7.8 8 10.2h-6.3l-4.9-6.4L5.3 21H2.2l7.3-8.3L1.8 3h6.4l4.4 5.8L17.8 3Zm-1.1 16.2h1.7L7.4 4.7H5.5l11.2 14.5Z',
+  LinkedIn:
+    'M4.5 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM3 8.5h3V21H3V8.5Zm5.5 0h2.9v1.7h.1c.4-.8 1.4-1.9 3.1-1.9 3.3 0 3.9 2.2 3.9 5V21h-3v-6.9c0-1.6 0-3.7-2.3-3.7s-2.6 1.8-2.6 3.6v7h-3V8.5Z',
+  Instagram:
+    'M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2Zm5-9.2a1.1 1.1 0 1 0 0 2.3 1.1 1.1 0 0 0 0-2.3ZM21 8.3c-.1-1.5-.4-2.8-1.5-3.8S17.2 3.1 15.7 3H8.3c-1.5.1-2.8.4-3.8 1.5S3.1 6.8 3 8.3v7.4c.1 1.5.4 2.8 1.5 3.8s2.3 1.4 3.8 1.5h7.4c1.5-.1 2.8-.4 3.8-1.5s1.4-2.3 1.5-3.8V8.3Zm-1.9 9.1a3 3 0 0 1-1.7 1.7c-1.2.5-3.9.4-5.4.4s-4.2.1-5.4-.4a3 3 0 0 1-1.7-1.7c-.5-1.2-.4-3.9-.4-5.4s-.1-4.2.4-5.4a3 3 0 0 1 1.7-1.7c1.2-.5 3.9-.4 5.4-.4s4.2-.1 5.4.4a3 3 0 0 1 1.7 1.7c.5 1.2.4 3.9.4 5.4s.1 4.2-.4 5.4Z',
+  YouTube:
+    'M22 7.2a2.6 2.6 0 0 0-1.8-1.8C18.6 5 12 5 12 5s-6.6 0-8.2.4A2.6 2.6 0 0 0 2 7.2 27 27 0 0 0 1.6 12c0 1.6.1 3.2.4 4.8a2.6 2.6 0 0 0 1.8 1.8c1.6.4 8.2.4 8.2.4s6.6 0 8.2-.4a2.6 2.6 0 0 0 1.8-1.8c.3-1.6.4-3.2.4-4.8s-.1-3.2-.4-4.8ZM9.9 15V9l5.5 3-5.5 3Z',
+};
 ---
 
 <footer class="pied-site">
-  <div class="conteneur pied-site__grille">
-    <div class="pied-site__identite">
-      {
-        siteConfig.logo ? (
-          <p class="pied-site__logo">
-            <img src={siteConfig.logo} alt={siteConfig.nom} width="200" height="87" loading="lazy" />
+  {
+    afficherBandeau && (
+      <section class="bandeau-aide" aria-labelledby="bandeau-aide-titre">
+        <div class="bandeau-aide__photo" aria-hidden="true">
+          <Photo id="prise-de-parole" sizes="(min-width: 48em) 55vw, 100vw" decorative remplir rogner />
+        </div>
+        <div class="conteneur bandeau-aide__contenu">
+          <p class="bandeau-aide__surtitre">Besoin d'aide ?</p>
+          <h2 id="bandeau-aide-titre" class="bandeau-aide__titre">Nous sommes là pour vous écouter</h2>
+          <p class="bandeau-aide__texte">
+            Une question, une situation à signaler ou une envie de collaborer ? Notre équipe vous répond.
           </p>
-        ) : (
-          <p class="pied-site__nom">{siteConfig.nom}</p>
-        )
-      }
-      <p>
-        Droits humains, justice, paix, bonne gouvernance et engagement des jeunes dans la région des
-        Grands Lacs africains.
-      </p>
+          <a class="bandeau-aide__bouton" href="/contact/">Nous contacter</a>
+        </div>
+      </section>
+    )
+  }
+
+  <div class="pied-site__principal">
+    <div class="conteneur pied-site__grille">
+      <div class="pied-site__colonne">
+        <h2 class="pied-site__titre">Contact</h2>
+        {
+          aDesCoordonnees ? (
+            <address>
+              {estRenseigne(coordonnees.adresse) && <p>{coordonnees.adresse}</p>}
+              {estRenseigne(coordonnees.telephone) && (
+                <p>
+                  <a href={`tel:${coordonnees.telephone.replace(/\s+/g, '')}`}>{coordonnees.telephone}</a>
+                </p>
+              )}
+              {estRenseigne(coordonnees.email) && (
+                <p>
+                  <a href={`mailto:${coordonnees.email}`}>{coordonnees.email}</a>
+                </p>
+              )}
+            </address>
+          ) : (
+            <p>Bukavu, {coordonnees.pays}</p>
+          )
+        }
+        <ul>
+          <li><a href="/contact/">Formulaire de contact</a></li>
+        </ul>
+      </div>
+
+      <nav class="pied-site__colonne" aria-labelledby="pied-organisation">
+        <h2 id="pied-organisation" class="pied-site__titre">L'organisation</h2>
+        <ul>
+          <li><a href="/a-propos/">À propos</a></li>
+          <li><a href="/programmes/">Nos programmes</a></li>
+          <li><a href="/actualites/">Actualités et publications</a></li>
+          <li><a href="/en-images/">En images</a></li>
+          <li><a href="/soutenir/">Soutenir nos actions</a></li>
+        </ul>
+      </nav>
+
+      <nav class="pied-site__colonne" aria-labelledby="pied-programmes">
+        <h2 id="pied-programmes" class="pied-site__titre">Programmes</h2>
+        <ul>
+          {programmes.map((p) => <li><a href={`/programmes/${p.id}/`}>{p.data.titre}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="pied-site__colonne">
+        <h2 class="pied-site__titre" id="pied-newsletter">Lettre d'information</h2>
+        <p>Recevez nos actualités et l'annonce de nos prochaines activités.</p>
+        <!-- Formulaire Netlify Forms, comme le formulaire de contact (voir README). -->
+        <form
+          class="newsletter"
+          name={nomFormulaire}
+          method="POST"
+          action="/newsletter/merci/"
+          data-netlify="true"
+          netlify-honeypot="champ-robot"
+          aria-labelledby="pied-newsletter"
+        >
+          <input type="hidden" name="form-name" value={nomFormulaire} />
+          <p class="visuellement-masque" aria-hidden="true">
+            <label>Ne pas remplir ce champ <input name="champ-robot" tabindex="-1" autocomplete="off" /></label>
+          </p>
+          <label class="visuellement-masque" for="newsletter-email">Votre adresse e-mail</label>
+          <input
+            id="newsletter-email"
+            class="newsletter__champ"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="Votre adresse e-mail"
+            required
+          />
+          <button class="newsletter__bouton" type="submit">
+            <span class="visuellement-masque">S'inscrire</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </form>
+        <p class="newsletter__mention">
+          Désinscription possible à tout moment. Voir notre <a href="/confidentialite/">politique de confidentialité</a>.
+        </p>
+      </div>
     </div>
 
-    <nav class="pied-site__colonne" aria-labelledby="pied-organisation">
-      <h2 id="pied-organisation" class="pied-site__titre">L'organisation</h2>
-      <ul>
-        <li><a href="/a-propos/">À propos</a></li>
-        <li><a href="/programmes/">Nos programmes</a></li>
-        <li><a href="/actualites/">Actualités et publications</a></li>
-        <li><a href="/en-images/">En images</a></li>
-        <li><a href="/soutenir/">Soutenir nos actions</a></li>
-      </ul>
-    </nav>
-
-    <nav class="pied-site__colonne" aria-labelledby="pied-programmes">
-      <h2 id="pied-programmes" class="pied-site__titre">Programmes</h2>
-      <ul>
-        {programmes.map((p) => <li><a href={`/programmes/${p.id}/`}>{p.data.titre}</a></li>)}
-      </ul>
-    </nav>
-
-    <div class="pied-site__colonne">
-      <h2 class="pied-site__titre">Nous contacter</h2>
-      {
-        aDesCoordonnees ? (
-          <address>
-            {estRenseigne(coordonnees.adresse) && <p>{coordonnees.adresse}</p>}
-            {estRenseigne(coordonnees.telephone) && (
-              <p>
-                <a href={`tel:${coordonnees.telephone.replace(/\s+/g, '')}`}>{coordonnees.telephone}</a>
-              </p>
-            )}
-            {estRenseigne(coordonnees.email) && (
-              <p>
-                <a href={`mailto:${coordonnees.email}`}>{coordonnees.email}</a>
-              </p>
-            )}
-          </address>
-        ) : (
-          <p>Pour toute question ou proposition de collaboration, écrivez-nous.</p>
-        )
-      }
-      <p><a class="lien-action" href="/contact/">Accéder au formulaire de contact</a></p>
+    <div class="conteneur pied-site__bas">
+      <div class="pied-site__signature">
+        {siteConfig.logo && <img class="pied-site__logo" src={siteConfig.logo} alt="" width="92" height="40" loading="lazy" />}
+        <p>© {annee} {siteConfig.nom}</p>
+      </div>
+      <nav aria-label="Informations légales">
+        <ul class="pied-site__legal">
+          {navigationLegale.map((l) => <li><a href={l.href}>{l.libelle}</a></li>)}
+        </ul>
+      </nav>
       {
         reseauxActifs.length > 0 && (
           <ul class="pied-site__reseaux" aria-label="Réseaux sociaux">
             {reseauxActifs.map((r) => (
               <li>
-                <a href={r.url!} rel="noopener noreferrer">{r.nom}</a>
+                <a href={r.url!} rel="noopener noreferrer" aria-label={`${r.nom} de ${siteConfig.nomCourt ?? siteConfig.nom}`}>
+                  {icones[r.nom] ? (
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                      <path d={icones[r.nom]} fill="currentColor" />
+                    </svg>
+                  ) : (
+                    r.nom
+                  )}
+                </a>
               </li>
             ))}
           </ul>
@@ -85,38 +171,140 @@ const annee = new Date().getFullYear();
       }
     </div>
   </div>
-
-  <div class="conteneur pied-site__bas">
-    <p>© {annee} {siteConfig.nom}</p>
-    <nav aria-label="Informations légales">
-      <ul>
-        {navigationLegale.map((l) => <li><a href={l.href}>{l.libelle}</a></li>)}
-      </ul>
-    </nav>
-  </div>
 </footer>
 
 <style>
   .pied-site {
-    background: var(--nuit);
-    color: #d5dfe9;
+    --pied-fond: #1f2328;
+    --pied-texte: #b8c0c8;
+    --pied-trait: rgba(255, 255, 255, 0.14);
     --focus: var(--mais);
-    padding-top: var(--e-6);
-    font-size: 0.975rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
   }
 
   .pied-site a {
-    color: #ffffff;
-    text-decoration-color: rgba(255, 255, 255, 0.45);
+    color: var(--pied-texte);
+    text-decoration: none;
   }
 
   .pied-site a:hover {
+    color: #ffffff;
+    text-decoration: underline;
     text-decoration-color: var(--mais);
+  }
+
+  .pied-site ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* ----- Bandeau « Besoin d'aide ? » ----- */
+  .bandeau-aide {
+    position: relative;
+    overflow: hidden;
+    background: var(--nuit-700);
+    color: #ffffff;
+    --focus: #ffffff;
+  }
+
+  .bandeau-aide__photo {
+    position: relative;
+    height: 13rem;
+  }
+
+  /* Recadrage un peu plus serré que d'habitude : le filigrane du coin reste hors champ. */
+  .bandeau-aide__photo :global(img) {
+    scale: 1.22;
+  }
+
+  .bandeau-aide__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, var(--nuit-700));
+  }
+
+  .bandeau-aide__contenu {
+    position: relative;
+    padding-block: var(--e-4) var(--e-6);
+  }
+
+  @media (min-width: 48em) {
+    .bandeau-aide__photo {
+      position: absolute;
+      /* Déborde sous le bandeau (masqué par overflow) pour cacher le filigrane du coin. */
+      inset: 0 0 -3rem auto;
+      width: 55%;
+      height: auto;
+    }
+
+    .bandeau-aide__photo::after {
+      background: linear-gradient(to right, var(--nuit-700), rgba(29, 85, 119, 0.35) 45%, transparent 75%);
+    }
+
+    .bandeau-aide__contenu {
+      padding-block: var(--e-7);
+    }
+
+    .bandeau-aide__contenu > * {
+      max-width: 26rem;
+    }
+  }
+
+  .bandeau-aide__surtitre {
+    margin-bottom: var(--e-2);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mais);
+  }
+
+  .bandeau-aide__titre {
+    margin-bottom: var(--e-2);
+    font-size: var(--t-h2);
+    color: #ffffff;
+  }
+
+  .bandeau-aide__texte {
+    margin-bottom: var(--e-4);
+    font-size: 0.9375rem;
+    color: #e3ecf3;
+  }
+
+  .pied-site .bandeau-aide__bouton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.4rem;
+    border: 1.5px solid #ffffff;
+    border-radius: 2px;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .pied-site .bandeau-aide__bouton:hover {
+    background: #ffffff;
+    color: var(--nuit);
+    text-decoration: none;
+  }
+
+  /* ----- Pied de page sombre ----- */
+  .pied-site__principal {
+    background: var(--pied-fond);
+    color: var(--pied-texte);
+    padding-top: var(--e-6);
   }
 
   .pied-site__grille {
     display: grid;
-    gap: var(--e-5);
+    gap: var(--e-5) var(--e-4);
   }
 
   @media (min-width: 40em) {
@@ -127,77 +315,137 @@ const annee = new Date().getFullYear();
 
   @media (min-width: 64em) {
     .pied-site__grille {
-      grid-template-columns: 1.4fr 1fr 1.2fr 1.2fr;
+      grid-template-columns: 1fr 1fr 1.3fr 1.5fr;
     }
   }
 
-  .pied-site__logo {
-    margin-bottom: var(--e-3);
-  }
-
-  .pied-site__logo img {
-    width: 12.5rem;
-    height: auto;
-    padding: 0.5rem 0.75rem;
-    background: #ffffff;
-    border-radius: var(--rayon);
-  }
-
-  .pied-site__nom {
-    font-family: var(--police-titres);
-    font-size: 1.375rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: var(--e-2);
-  }
-
   .pied-site__titre {
-    font-family: var(--police-texte);
-    font-size: 1rem;
-    color: var(--mais);
     margin-bottom: var(--e-3);
+    font-family: var(--police-texte);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
   }
 
-  .pied-site ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .pied-site__colonne p {
+    margin-bottom: var(--e-2);
   }
 
   .pied-site__colonne li a {
     display: inline-block;
-    padding-block: 0.3rem;
+    padding-block: 0.2rem;
   }
 
   .pied-site address {
     font-style: normal;
   }
 
-  .pied-site__reseaux {
+  /* Lettre d'information : champ souligné et bouton flèche */
+  .newsletter {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--e-3);
-    margin-top: var(--e-3) !important;
+    margin-top: var(--e-3);
+    border: 1px solid rgba(255, 255, 255, 0.35);
   }
 
+  .newsletter:focus-within {
+    border-color: #ffffff;
+  }
+
+  .newsletter__champ {
+    flex: 1;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.8125rem;
+  }
+
+  .newsletter__champ::placeholder {
+    color: var(--pied-texte);
+    opacity: 1;
+  }
+
+  .newsletter__bouton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    border: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.35);
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .newsletter__bouton:hover {
+    background: var(--mais);
+    color: var(--nuit);
+  }
+
+  .newsletter__mention {
+    margin-top: var(--e-2);
+    font-size: 0.75rem;
+  }
+
+  .pied-site .newsletter__mention a {
+    text-decoration: underline;
+  }
+
+  /* Ligne finale */
   .pied-site__bas {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: var(--e-3);
+    gap: var(--e-3) var(--e-5);
     margin-top: var(--e-6);
     padding-block: var(--e-4);
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
-    font-size: var(--t-petit);
+    border-top: 1px solid var(--pied-trait);
+    font-size: 0.75rem;
   }
 
   .pied-site__bas p {
     margin: 0;
   }
 
-  .pied-site__bas ul {
+  .pied-site__signature {
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+  }
+
+  .pied-site__logo {
+    width: 5.75rem;
+    height: auto;
+    padding: 0.2rem 0.35rem;
+    background: #ffffff;
+    border-radius: 3px;
+  }
+
+  .pied-site__legal {
     display: flex;
     flex-wrap: wrap;
     gap: var(--e-2) var(--e-4);
+  }
+
+  .pied-site__reseaux {
+    display: flex;
+    gap: var(--e-2);
+  }
+
+  .pied-site__reseaux a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: #ffffff;
+  }
+
+  .pied-site__reseaux a:hover {
+    color: var(--mais);
   }
 </style>
